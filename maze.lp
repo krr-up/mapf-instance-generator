@@ -1,0 +1,24 @@
+#const w = 10.
+
+dim(1..w).
+dim2((D*2)-1) :- dim(D).
+
+1 { parent(X,Y, 0,-2);
+    parent(X,Y, 2, 0);
+    parent(X,Y,-2, 0);
+    parent(X,Y, 0, 2) } 1 :-
+dim2(X), dim2(Y).
+
+edge((X     ,Y     ),(X+DX/2,Y+DY/2)) :- parent(X,Y,DX,DY).
+edge((X+DX/2,Y+DY/2),(X+DX  ,Y+DY  )) :- parent(X,Y,DX,DY).
+
+:- edge(_,(X,_)), X<1.
+:- edge(_,(_,Y)), Y<1.
+
+1{start(X,Y) : dim2(X), dim2(Y)}1.
+linked(X,Y) :- start(X,Y).
+linked(X,Y) :- parent(X,Y,DX,DY), linked(X+DX,Y+DY).
+:- dim2(X), dim2(Y), not linked(X,Y).
+
+#show.
+#show edge/2.
