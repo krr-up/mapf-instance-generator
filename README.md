@@ -31,3 +31,5 @@ ___
 - [task.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/task.lp): Inserts tasks
 
   usage: `clingo instance.lp task.lp -c r=2`
+
+- rooms.lp: (WIP) Generates instances with rooms
