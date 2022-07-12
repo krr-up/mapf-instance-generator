@@ -1,6 +1,6 @@
 ### Various MAPF instance generators for the [lightweight MAPF instance format](https://github.com/krr-up/mapf-instance-format)
 ___
-
+To be able to visualize the instances with the asprilo visualizer, use the converter: [mif_to_asprilo.lp](https://github.com/krr-up/mapf-instance-format/blob/main/mif_to_asprilo.lp).
 - [random.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/random.lp): Generates a random instance
 
   usage: `clingo random.lp --rand-freq=1 -c x=5 -c y=5 -c v=15`
