@@ -33,3 +33,9 @@ To be able to visualize the instances with the asprilo visualizer, use the conve
   usage: `clingo instance.lp task.lp -c r=2`
 
 - rooms.lp: (WIP) Generates instances with rooms
+
+### Literature:
+___
+- [Answer Set Programming for Procedural Content Generation: A Design Space Approach](https://doi.org/10.1109/TCIAIG.2011.2158545)
+- [ASP with Applications to Mazes and Levels](https://doi.org/10.1007/978-3-319-42716-4_8)
+- [Stepping through an Answer-Set Program](https://doi.org/10.1007/978-3-642-20895-9_13)
