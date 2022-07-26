@@ -15,8 +15,8 @@ edge((X+DX/2,Y+DY/2),(X+DX  ,Y+DY  )) :- parent(X,Y,DX,DY).
 :- edge(_,(X,_)), X<1.
 :- edge(_,(_,Y)), Y<1.
 
-1{start(X,Y) : dim2(X), dim2(Y)}1.
-linked(X,Y) :- start(X,Y).
+1{init(X,Y) : dim2(X), dim2(Y)}1.
+linked(X,Y) :- init(X,Y).
 linked(X,Y) :- parent(X,Y,DX,DY), linked(X+DX,Y+DY).
 :- dim2(X), dim2(Y), not linked(X,Y).
 
