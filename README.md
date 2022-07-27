@@ -46,7 +46,7 @@ The generator makes use of the following encodings that can also be used without
   
 - [task.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/encodings/task.lp): Inserts agents, starts and goals
 
-  usage: `clingo instance.lp task.lp -c r=2`
+  usage: `clingo instance.lp task.lp -c r=2 --rand-freq=1`
 
 - rooms.lp: (WIP) Generates instances with rooms
 
