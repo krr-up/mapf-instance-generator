@@ -16,10 +16,12 @@ group.add_argument("-r", "--random",		help="Generate a random instance",		action
 
 parser.add_argument("-s", "--size",		help="Size of instance",			type=str, required=True)
 parser.add_argument("-a", "--agents",		help="Number of agents",			type=str, required=True)
-parser.add_argument("-c", "--cover",		help="Percentage of vertices covered",	type=int, default=50)
+parser.add_argument("-c", "--cover",		help="Percentage of vertices covered",	type=int, default=50, metavar="[0-100]")
 parser.add_argument("-v", "--visualize",	help="Convert generated instance to asprilo format and visualize it with asprilo visualizer", action='store_true')
 # TODO: parser.add_argument("-t", "--test",		help="Tests if generated instance is solvable",		action='store_true')
 args = parser.parse_args()
+
+if args.cover < 0 or args.cover > 100: raise argparse.ArgumentTypeError('argument -c/--cover: int value must be between 0 and 100')
 
 if args.maze:
 	instanceFileName  = 'maze_s' + args.size + '_a' + args.agents +'.lp'
