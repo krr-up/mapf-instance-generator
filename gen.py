@@ -26,7 +26,7 @@ if args.maze:
 if args.random:
 	instanceFileName  = 'random_s' + args.size + '_a' + args.agents + '_c' + str(args.cover) +'.lp'
 	numVertices       = str(int(((int(args.size)*int(args.size))/100)*args.cover))
-	instance_unfilled = getoutput('clingo encodings/random.lp -c w=' + args.size + ' -c v=' + numVertices + ' --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
+	instance_unfilled = getoutput('clingo encodings/random.lp -c x=' + args.size + ' -c y=' + args.size + ' -c v=' + numVertices + ' --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
 	instanceHeader    = '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%\n% Grid Size X:\t\t\t\t' + args.size + '\n% Grid Size Y:\t\t\t\t' + args.size + '\n% Possible vertices used (in %):\t' + str(args.cover) + '\n% Number of Vertices:\t\t\t' + numVertices + '\n% Number of Agents:\t\t\t' + args.agents + '\n%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n#program base.\n\n'
 
 with open(instanceFileName, "w") as instance:
