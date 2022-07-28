@@ -9,11 +9,14 @@ import argparse, os
 from subprocess import getoutput
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-s", "--size",		help="Size of instance",			type=str)
-parser.add_argument("-a", "--agents",		help="Number of agents",			type=str)
-parser.add_argument("-c", "--cover",		help="Percentage of vertices covered",	type=int)
-parser.add_argument("-m", "--maze",		help="Generate a maze",			action='store_true')
-parser.add_argument("-r", "--random",		help="Generate a random instance",		action='store_true')
+
+group = parser.add_mutually_exclusive_group(required=True)
+group.add_argument("-m", "--maze",		help="Generate a maze",			action='store_true')
+group.add_argument("-r", "--random",		help="Generate a random instance",		action='store_true')
+
+parser.add_argument("-s", "--size",		help="Size of instance",			type=str, required=True)
+parser.add_argument("-a", "--agents",		help="Number of agents",			type=str, required=True)
+parser.add_argument("-c", "--cover",		help="Percentage of vertices covered",	type=int, default=50)
 parser.add_argument("-v", "--visualize",	help="Convert generated instance to asprilo format and visualize it with asprilo visualizer", action='store_true')
 # TODO: parser.add_argument("-t", "--test",		help="Tests if generated instance is solvable",		action='store_true')
 args = parser.parse_args()
