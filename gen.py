@@ -13,6 +13,7 @@ parser = argparse.ArgumentParser()
 group = parser.add_mutually_exclusive_group(required=True)
 group.add_argument("-m", "--maze",		help="Generate a maze",			action='store_true')
 group.add_argument("-r", "--random",		help="Generate a random instance",		action='store_true')
+#group.add_argument("-ro", "--room",		help="Generate an instance with rooms",	action='store_true')
 
 parser.add_argument("-s", "--size",		help="Size of instance",			type=str, required=True)
 parser.add_argument("-a", "--agents",		help="Number of agents",			type=str, required=True)
@@ -26,13 +27,35 @@ if args.cover < 0 or args.cover > 100: raise argparse.ArgumentTypeError('argumen
 if args.maze:
 	instanceFileName  = 'maze_s' + args.size + '_a' + args.agents +'.lp'
 	instance_unfilled = getoutput('clingo encodings/maze.lp -c w=' + args.size + ' --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1') 
-	instanceHeader    = '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%\n% Grid Size X:\t\t\t' + str(int(args.size)*2) + '\n% Grid Size Y:\t\t\t' + str(int(args.size)*2) + '\n% Number of Agents:\t\t' + args.agents + '\n%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n#program base.\n\n'
+	instanceHeader    = '''%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Grid Size X:\t\t\t''' + str(int(args.size)*2) + '''
+% Grid Size Y:\t\t\t''' + str(int(args.size)*2) + '''
+% Number of Agents:\t\t''' + args.agents + '''
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+#program base.
+
+'''
 
 if args.random:
 	instanceFileName  = 'random_s' + args.size + '_a' + args.agents + '_c' + str(args.cover) +'.lp'
 	numVertices       = str(int(((int(args.size)*int(args.size))/100)*args.cover))
 	instance_unfilled = getoutput('clingo encodings/random.lp -c x=' + args.size + ' -c y=' + args.size + ' -c v=' + numVertices + ' --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
-	instanceHeader    = '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%\n% Grid Size X:\t\t\t\t' + args.size + '\n% Grid Size Y:\t\t\t\t' + args.size + '\n% Possible vertices used (in %):\t' + str(args.cover) + '\n% Number of Vertices:\t\t\t' + numVertices + '\n% Number of Agents:\t\t\t' + args.agents + '\n%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n#program base.\n\n'
+	instanceHeader    ='''%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Grid Size X:\t\t\t\t''' + args.size + '''
+% Grid Size Y:\t\t\t\t''' + args.size + '''
+% Possible vertices used (in %):\t''' + str(args.cover) + '''
+% Number of Vertices:\t\t\t''' + numVertices + '''
+% Number of Agents:\t\t\t''' + args.agents + '''
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+#program base.
+
+'''
 
 with open(instanceFileName, "w") as instance:
 	instance.write(instance_unfilled)
