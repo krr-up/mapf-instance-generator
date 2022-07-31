@@ -10,9 +10,11 @@ optional arguments:
   -h,         --help            Show this help message and exit
   -m,         --maze            Generate a maze
   -r,         --random          Generate a random instance
+  -ro,        --room            Generate an instance with rooms
   -s SIZE,    --size SIZE       Size of instance
   -a AGENTS,  --agents AGENTS   Number of agents
   -c [0-100], --cover [0-100]   Percentage of vertices covered
+  -w WIDTH,   --width           Width of rooms
   -v,         --visualize       Convert generated instance to asprilo format and visualize it with asprilo visualizer
   ```
 The generator makes use of the following encodings that can also be used without the generator as follows:
@@ -43,12 +45,14 @@ The generator makes use of the following encodings that can also be used without
   ![example of a maze](https://github.com/krr-up/mapf-instance-generators/blob/main/examples/maze_inf.png "infinite maze example")
   
   </details>
-  
+
+- [room.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/encodings/room.lp): Generates instances with rooms
+
+  usage: `clingo instance.lp room.lp --rand-freq=1 -c x=20 -c y=20 -y w=5` 
+
 - [task.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/encodings/task.lp): Inserts agents, starts and goals
 
-  usage: `clingo instance.lp task.lp -c r=2 --rand-freq=1`
-
-- rooms.lp: (WIP) Generates instances with rooms
+  usage: `clingo instance.lp task.lp --rand-freq=1 -c r=2 `
 
 To be able to visualize the instances with the asprilo visualizer, use the converter: [mif_to_asprilo.lp](https://github.com/krr-up/mapf-instance-format/blob/main/mif_to_asprilo.lp).
 ___
