@@ -4,18 +4,24 @@ ___
 To generate instances use [gen.py](https://github.com/krr-up/mapf-instance-generators/blob/main/gen.py) as follows:
 
 ```
-usage: gen.py [-h] (-m | -r) -s SIZE -a AGENTS [-c [0-100]] [-v]
+usage: gen.py (maze | random -c [0-100] | room -w WIDTH) -s SIZE -a AGENTS [-v] [-h]
+
+positional arguments:
+  {maze,random,room}
 
 optional arguments:
-  -h,         --help            Show this help message and exit
-  -m,         --maze            Generate a maze
-  -r,         --random          Generate a random instance
-  -ro,        --room            Generate an instance with rooms
-  -s SIZE,    --size SIZE       Size of instance
-  -a AGENTS,  --agents AGENTS   Number of agents
-  -c [0-100], --cover [0-100]   Percentage of vertices covered
-  -w WIDTH,   --width           Width of rooms
-  -v,         --visualize       Convert generated instance to asprilo format and visualize it with asprilo visualizer
+  -h,         --help           show this help message and exit
+  -v,         --visualize      convert generated instance to asprilo format and visualize it with asprilo visualizer
+
+required arguments for all:
+  -s SIZE,    --size SIZE      size of instance
+  -a AGENTS,  --agents AGENTS  number of agents
+
+required arguments for room:
+  -w WIDTH,   --width WIDTH    width of rooms
+
+required arguments for random:
+  -c [0-100], --cover [0-100]  percentage of vertices covered
   ```
 The generator makes use of the following encodings that can also be used without the generator as follows:
 
