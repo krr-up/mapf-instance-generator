@@ -9,21 +9,24 @@ import argparse, os
 from subprocess import getoutput
 
 ################ Argument Parser ################
-parser = argparse.ArgumentParser()
-
-group = parser.add_mutually_exclusive_group(required=True)
-group.add_argument("-m", "--maze",		help="Generate a maze",			action='store_true')
-group.add_argument("-r", "--random",		help="Generate a random instance",		action='store_true')
-group.add_argument("-ro", "--room",		help="Generate an instance with rooms",	action='store_true')
-
-parser.add_argument("-s", "--size",		help="Size of instance",			type=str, required=True)
-parser.add_argument("-a", "--agents",		help="Number of agents",			type=str, required=True)
-parser.add_argument("-c", "--cover",		help="Percentage of vertices covered",	type=int, default=50, metavar="[0-100]")
-parser.add_argument("-w", "--width",		help="Width of rooms",				type=str)
-parser.add_argument("-v", "--visualize",	help="Convert generated instance to asprilo format and visualize it with asprilo visualizer", action='store_true')
+parser      = argparse.ArgumentParser(usage='gen.py (maze | random -c [0-100] | room -w WIDTH) -s SIZE -a AGENTS [-v] [-h]')
+subparsers  = parser.add_subparsers()
+maze_parser = subparsers.add_parser('maze')
+rand_parser = subparsers.add_parser('random')
+room_parser = subparsers.add_parser('room')
+maze_parser.add_argument("maze",		help="generate maze",			action='store_true')
+rand_parser.add_argument("random",		help="generate random instance",	action='store_true')
+room_parser.add_argument("room",		help="generate instance with rooms",	action='store_true')
+req_group    = parser.add_argument_group('required arguments for all')
+room_group   = parser.add_argument_group('required arguments for room')
+random_group = parser.add_argument_group('required arguments for random')
+req_group.add_argument("-s", "--size",	help="size of instance",			type=str, required=True)
+req_group.add_argument("-a", "--agents",	help="number of agents",			type=str, required=True)
+random_group.add_argument("-c", "--cover",	help="percentage of vertices covered",	type=int, default=50, metavar="[0-100]")
+room_group.add_argument("-w", "--width",	help="width of rooms",				type=str)
+parser.add_argument("-v", "--visualize",	help="convert generated instance to asprilo format and visualize it with asprilo visualizer", action='store_true')
 # TODO: parser.add_argument("-t", "--test",		help="Tests if generated instance is solvable",		action='store_true')
 args = parser.parse_args()
-
 if args.cover < 0 or args.cover > 100: raise argparse.ArgumentTypeError('argument -c/--cover: int value must be between 0 and 100')
 
 ################ Maze generation ################
@@ -64,7 +67,7 @@ if args.random:
 ################ Room generation ################
 if args.room:
 	instanceFileName  = 'room_s' + args.size + '_a' + args.agents + '_w' + str(args.width) +'.lp'
-	instance_unfilled = getoutput('clingo encodings/room.lp -c x=' + args.size + ' -c y=' + args.size + ' -c w=' + args.width + ' --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
+	instance_unfilled = getoutput('clingo encodings/room.lp -c x=' + args.size + ' -c y=' + args.size + ' -c w=' + args.width + ' --rand-freq=1 --configuration=frumpy -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
 	instanceHeader    ='''%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Grid Size X:\t\t''' + args.size + '''
