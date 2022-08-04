@@ -1,4 +1,4 @@
-### Various MAPF instance generators for the [lightweight MAPF instance format](https://github.com/krr-up/mapf-instance-format)
+### Instance generator for the [lightweight MAPF instance format](https://github.com/krr-up/mapf-instance-format)
 ___
 
 To generate instances use [gen.py](https://github.com/krr-up/mapf-instance-generators/blob/main/gen.py) as follows:
