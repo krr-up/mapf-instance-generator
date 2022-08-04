@@ -12,9 +12,9 @@ def agents():
 	instance_filled = getoutput('clingo ' + instanceFileName + ' encodings/task.lp -c r=' + args.agents + ' --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
 
 def header():
-	header = '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%\n% Size X and Y:\t\t\t' + str(int(args.size)*2) + '\n% Number of Agents:\t\t' + args.agents
-	if args.type == 'random': header = header + '% Vertices used (in %):\t' + str(args.cover)
-	if args.type == 'room':   header = header + '% Room Width:\t\t' + args.width
+	header = '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%\n% Size X and Y:\t\t' + str(int(args.size)*2) + '\n% Number of Agents:\t\t' + args.agents
+	if args.type == 'random': header = header + '\n% Vertices used (in %):\t' + str(args.cover)
+	if args.type == 'room':   header = header + '\n% Room Width:\t\t\t' + args.width
 	header = header + '\n%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n#program base.\n\n'
 	return header
 
