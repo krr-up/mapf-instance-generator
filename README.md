@@ -44,7 +44,7 @@ The generator makes use of the following encodings that can also be used without
 
 - [task.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/encodings/task.lp): Inserts agents, starts and goals
 
-  usage: `clingo instance.lp task.lp --rand-freq=1 -c r=2 `
+  usage: `clingo instance.lp task.lp --rand-freq=1 -c a=2 `
 
 To be able to visualize the instances with the asprilo visualizer, use the converter: [mif_to_asprilo.lp](https://github.com/krr-up/mapf-instance-format/blob/main/mif_to_asprilo.lp).
 ___
