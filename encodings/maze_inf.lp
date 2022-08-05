@@ -1,6 +1,6 @@
-#const w = 4.
+#const s = 4.
 
-dim(1..w).
+dim(1..s).
 dim2((D*2)-1) :- dim(D).
 
 1 { parent(X,Y, 0,-2);
