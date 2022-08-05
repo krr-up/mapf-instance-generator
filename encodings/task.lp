@@ -1,10 +1,10 @@
 % number of agents:
-#const r=1.
+#const a=1.
 
 vertex(N) :- edge(N,_).
 vertex(N) :- edge(_,N).
 
-agent(1..r).
+agent(1..a).
 
 1{start(R,S) :  vertex(S)}1 :- agent(R).
 1{ goal(R,G) :  vertex(G)}1 :- agent(R).
