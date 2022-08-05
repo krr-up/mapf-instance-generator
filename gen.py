@@ -21,7 +21,7 @@ def header():
 def maze():
 	global instanceFileName, instance_unfilled
 	instanceFileName  = 'maze_s' + args.size + '_a' + args.agents +'.lp'
-	instance_unfilled = getoutput('clingo encodings/maze.lp -c w=' + args.size + ' --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1') 
+	instance_unfilled = getoutput('clingo encodings/maze.lp -c s=' + args.size + ' --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1') 
 
 def random():
 	global instanceFileName, instance_unfilled
@@ -29,13 +29,13 @@ def random():
 	elif args.cover < 0 or args.cover > 100: raise argparse.ArgumentTypeError('argument -c/--cover: int value must be between 0 and 100')
 	instanceFileName  = 'random_s' + args.size + '_a' + args.agents + '_c' + str(args.cover) +'.lp'
 	numVertices       = str(int(((int(args.size)*int(args.size))/100)*args.cover))
-	instance_unfilled = getoutput('clingo encodings/random.lp -c x=' + args.size + ' -c y=' + args.size + ' -c v=' + numVertices + ' --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
+	instance_unfilled = getoutput('clingo encodings/random.lp -c s=' + args.size + ' -c v=' + numVertices + ' --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
 
 def room():
 	global instanceFileName, instance_unfilled
 	if args.width is None: raise parser.error('room requires -w/--width: width of rooms')
 	instanceFileName  = 'room_s' + args.size + '_a' + args.agents + '_w' + str(args.width) +'.lp'
-	instance_unfilled = getoutput('clingo encodings/room.lp -c x=' + args.size + ' -c y=' + args.size + ' -c w=' + args.width + ' --rand-freq=1 --configuration=frumpy -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
+	instance_unfilled = getoutput('clingo encodings/room.lp -c s=' + args.size + ' -c w=' + args.width + ' --rand-freq=1 --configuration=frumpy -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
 
 def write(mode, string):
 	with open(instanceFileName, mode) as instance:
