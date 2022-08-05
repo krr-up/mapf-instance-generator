@@ -28,19 +28,19 @@ The generator makes use of the following encodings that can also be used without
 
 - [random.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/encodings/random.lp): Generates a random instance
 
-  usage: `clingo random.lp --rand-freq=1 -c x=5 -c y=5 -c v=15`
+  usage: `clingo random.lp --rand-freq=1 -c s=5 -c v=15`
   
 - [maze.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/encodings/maze.lp): Generates a fully connected maze with dead ends
 
-  usage: `clingo maze.lp --rand-freq=1 -c w=4`
+  usage: `clingo maze.lp --rand-freq=1 -c s=4`
 
 - [maze_inf.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/encodings/maze_inf.lp): Generates a fully connected infinite maze
 
-  usage: `clingo maze_inf.lp --rand-freq=1 -c w=4`
+  usage: `clingo maze_inf.lp --rand-freq=1 -c s=4`
 
 - [room.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/encodings/room.lp): Generates instances with rooms
 
-  usage: `clingo room.lp --rand-freq=1 --configuration=frumpy -c x=20 -c y=20 -c w=5` 
+  usage: `clingo room.lp --rand-freq=1 --configuration=frumpy -c s=20 -c w=5` 
 
 - [task.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/encodings/task.lp): Inserts agents, starts and goals
 
