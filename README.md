@@ -46,7 +46,9 @@ The generator makes use of the following encodings that can also be used without
 
   usage: `clingo instance.lp task.lp --rand-freq=1 -c a=2 `
 
-To be able to visualize the instances with the asprilo visualizer, use the converter: [mif_to_asprilo.lp](https://github.com/krr-up/mapf-instance-format/blob/main/mif_to_asprilo.lp).
+To be able to visualize the instances with the asprilo visualizer, use the converter: [mif_to_asprilo.lp](https://github.com/krr-up/mapf-instance-format/blob/main/mif_to_asprilo.lp) like this:
+
+usage: `clingo instance.lp mif_to_asprilo.lp | viz`
 ___
 ### Literature:
 - [Answer Set Programming for Procedural Content Generation: A Design Space Approach](https://doi.org/10.1109/TCIAIG.2011.2158545)
