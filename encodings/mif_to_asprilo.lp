@@ -1,6 +1,7 @@
 #show.
 #show init(object(node, 1), value(at, V)) : edge(V,_).
 #show init(object(node, 1), value(at, V)) : edge(_,V).
+#show init(object(node, 1), value(at, V)) : vertex(V).
 
 #show init(object(robot,R), value(at, S)) : start(R,S).
 #show init(object(shelf,R), value(at, G)) :  goal(R,G).
