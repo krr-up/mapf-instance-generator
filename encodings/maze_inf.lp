@@ -12,8 +12,12 @@ dim2(X), dim2(Y).
 edge((X     ,Y     ),(X+DX/2,Y+DY/2)) :- parent(X,Y,DX,DY).
 edge((X+DX/2,Y+DY/2),(X+DX  ,Y+DY  )) :- parent(X,Y,DX,DY).
 
+edge(V,U) :- edge(U,V).
+
 :- edge(_,(X,_)), X<1.
 :- edge(_,(_,Y)), Y<1.
+
+vertex((V)) :- edge(V,_).
 
 connected(A,B) :- edge(A,B).
 connected(A,B) :- edge(B,A).
@@ -22,3 +26,4 @@ connected(A,C) :- edge(B,C), connected(A,B).
 
 #show.
 #show edge/2.
+#show vertex/1.
