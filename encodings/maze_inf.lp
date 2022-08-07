@@ -17,7 +17,7 @@ edge(V,U) :- edge(U,V).
 :- edge(_,(X,_)), X<1.
 :- edge(_,(_,Y)), Y<1.
 
-vertex((V)) :- edge(V,_).
+vertex(V) :- edge(V,_).
 
 connected(A,B) :- edge(A,B).
 connected(A,B) :- edge(B,A).
