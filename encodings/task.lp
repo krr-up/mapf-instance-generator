@@ -1,19 +1,15 @@
 % number of agents:
 #const a=1.
 
-vertex(N) :- edge(N,_).
-vertex(N) :- edge(_,N).
-
 agent(1..a).
 
-1{start(R,S) :  vertex(S)}1 :- agent(R).
-1{ goal(R,G) :  vertex(G)}1 :- agent(R).
+1{start(A,S) :  vertex(S)}1 :- agent(A).
+1{ goal(A,G) :  vertex(G)}1 :- agent(A).
 
+:- 2{start(A,S) : agent(A)}, vertex(S).
+:- 2{ goal(A,G) : agent(A)}, vertex(G).
 
-:- 2{start(R,S) : agent(R)}, vertex(S).
-:- 2{ goal(R,G) : agent(R)}, vertex(G).
-
-:- start(R,V), goal(R,V).
+:- start(A,V), goal(A,V).
 
 #show vertex/1.
 #show agent/1.
