@@ -17,7 +17,7 @@ edge(V,U) :- edge(U,V).
 :- edge(_,(X,_)), X<1.
 :- edge(_,(_,Y)), Y<1.
 
-vertex((V)) :- edge(V,_).
+vertex(V) :- edge(V,_).
 
 1{init(X,Y) : dim2(X), dim2(Y)}1.
 linked(X,Y) :- init(X,Y).
@@ -26,3 +26,4 @@ linked(X,Y) :- parent(X,Y,DX,DY), linked(X+DX,Y+DY).
 
 #show.
 #show edge/2.
+#show vertex/1.
