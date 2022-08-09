@@ -28,7 +28,7 @@ The generator makes use of the following encodings that can also be used without
 
 - [random.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/encodings/random.lp): Generates a random instance
 
-  usage: `clingo random.lp --rand-freq=1 -c s=5 -c v=15`
+  usage: `clingo random.lp --rand-freq=1 -c s=5 -c c=50`
   
 - [maze.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/encodings/maze.lp): Generates a fully connected maze with dead ends
 
