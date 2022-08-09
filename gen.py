@@ -47,7 +47,7 @@ def write(mode, string):
 	with open(instanceFileName, mode) as instance:
 		instance.write(string)
 
-parser       = argparse.ArgumentParser(usage='gen.py (maze | random -c [0-100] | room -w WIDTH) -s SIZE -a AGENTS [-v] [-h]')
+parser       = argparse.ArgumentParser(usage='gen.py (maze | random -c [0-100] | room -w WIDTH) -s SIZE -a AGENTS [-m] [-v] [-h]')
 req_group    = parser.add_argument_group('required arguments for all')
 room_group   = parser.add_argument_group('required arguments for room')
 random_group = parser.add_argument_group('required arguments for random')
