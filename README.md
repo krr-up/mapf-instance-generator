@@ -39,7 +39,7 @@ The generator makes use of the following encodings that can also be used without
 
   usage: `clingo maze_inf.lp --rand-freq=1 -c s=4`
 
-- [room.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/encodings/room.lp): Generates instances with rooms
+- [room.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/encodings/room.lp): Generates instance with rooms
 
   usage: `clingo room.lp --rand-freq=1 --configuration=frumpy -c s=20 -c w=5` 
 
