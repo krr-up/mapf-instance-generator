@@ -5,14 +5,15 @@
 To generate instances use [gen.py](https://github.com/krr-up/mapf-instance-generators/blob/main/gen.py) as follows:
 
 ```
-usage: gen.py (maze | random -c [0-100] | room -w WIDTH) -s SIZE -a AGENTS [-v] [-h]
+usage: gen.py (maze | random -c [0-100] | room -w WIDTH) -s SIZE -a AGENTS [-m] [-v] [-h]
 
 positional arguments:
   {maze,random,room}
 
 optional arguments:
   -h,         --help           show this help message and exit
-  -v,         --visualize      convert generated instance to asprilo format and visualize it with asprilo visualizer
+  -v,         --visualize      convert to and visualize with asprilo
+  -m,         --meta           gets and adds meta informations
 
 required arguments for all:
   -s SIZE,    --size SIZE      size of instance
@@ -34,7 +35,7 @@ The generator makes use of the following encodings that can also be used without
 
   usage: `clingo maze.lp --rand-freq=1 -c s=4`
 
-- [maze_inf.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/encodings/maze_inf.lp): Generates a fully connected infinite maze
+- [maze_inf.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/encodings/maze_inf.lp): Generates a fully connected infinite maze (not part of gen.py as instances are not of much use)
 
   usage: `clingo maze_inf.lp --rand-freq=1 -c s=4`
 
@@ -42,9 +43,9 @@ The generator makes use of the following encodings that can also be used without
 
   usage: `clingo room.lp --rand-freq=1 --configuration=frumpy -c s=20 -c w=5` 
 
-- [task.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/encodings/task.lp): Inserts agents, starts and goals
+- [agents.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/encodings/agents.lp): Inserts agents, starts and goals
 
-  usage: `clingo instance.lp task.lp --rand-freq=1 -c a=2 `
+  usage: `clingo instance.lp agents.lp --rand-freq=1 -c a=2 `
 
 To be able to visualize the instances with the asprilo visualizer, use the converter: [mif_to_asprilo.lp](https://github.com/krr-up/mapf-instance-format/blob/main/mif_to_asprilo.lp) like this:
 
