@@ -29,7 +29,7 @@ def random():
 	if args.cover is None: raise parser.error('random requires -c/--cover: percentage of vertices covered')
 	elif int(args.cover) < 0 or int(args.cover) > 100: raise argparse.ArgumentTypeError('argument -c/--cover: int value must be between 0 and 100')
 	instanceFileName  = 'random_s' + args.size + '_a' + args.agents + '_c' + args.cover +'.lp'
-	instance_unfilled = getoutput('clingo encodings/random.lp -c s=' + args.size + ' -c v=' + args.cover + ' --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
+	instance_unfilled = getoutput('clingo encodings/random.lp -c s=' + args.size + ' -c c=' + args.cover + ' --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
 
 def room():
 	global instanceFileName, instance_unfilled
