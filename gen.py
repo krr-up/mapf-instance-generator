@@ -1,9 +1,3 @@
-#TODO:	- enable generation of multiple instances in folder structure
-#	- in case of multiple generations of instances with same parameters, change randomness and append number to filename instead of overwriting
-#	- get more meta information like shortest paths and their length and add them as facts
-#	- enable generation of same instance with variations of agent numbers and/or minimum start-to-goal-distance
-#	- replace getoutput calls by using python clingo module and multishot for getting horizon to improve performance
-
 import argparse, os
 from subprocess import getoutput
 
@@ -41,7 +35,7 @@ def meta():
 	horizon=1
 	while 'UN' in getoutput('clingo ' + instanceFileName + ' encodings/mif.lp -c horizon=' + str(horizon) + ' -V0 -q'): horizon = horizon + 1
 	write('a', '\nmakespan(' + str(horizon) + ').')
-	os.rename(instanceFileName, instanceFileName[:-3] + '_h' + str(horizon) +'.lp')
+	os.rename(instanceFileName, instanceFileName[:-3] + '_h' + str(horizon) + '.lp')
 
 def write(mode, string):
 	with open(instanceFileName, mode) as instance:
@@ -52,12 +46,12 @@ req_group    = parser.add_argument_group('required arguments for all')
 room_group   = parser.add_argument_group('required arguments for room')
 random_group = parser.add_argument_group('required arguments for random')
 parser.add_argument(      'type',              help='type of instance to be generated',         choices=('maze', 'random', 'room'))
-parser.add_argument(      "-v", "--visualize", help="convert to and visualize with asprilo",    action='store_true')
-parser.add_argument(      "-m", "--meta",      help="gets and adds meta informations",          action='store_true')
-req_group.add_argument(   "-s", "--size",      help="size of instance",               type=str, required=True)
-req_group.add_argument(   "-a", "--agents",    help="number of agents",               type=str, required=True)
-room_group.add_argument(  "-w", "--width",     help="width of rooms",                 type=str)
-random_group.add_argument("-c", "--cover",     help="percentage of vertices covered", type=str, metavar="[0-100]")
+parser.add_argument(      '-v', '--visualize', help='convert to and visualize with asprilo',    action='store_true')
+parser.add_argument(      '-m', '--meta',      help='gets and adds meta informations',          action='store_true')
+req_group.add_argument(   '-s', '--size',      help='size of instance',               type=str, required=True)
+req_group.add_argument(   '-a', '--agents',    help='number of agents',               type=str, required=True)
+room_group.add_argument(  '-w', '--width',     help='width of rooms',                 type=str)
+random_group.add_argument('-c', '--cover',     help='percentage of vertices covered', type=str, metavar='[0-100]')
 args = parser.parse_args()
 
 if args.type == 'maze': maze()
