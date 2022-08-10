@@ -2,6 +2,7 @@
 
 ![instance examples](https://github.com/krr-up/mapf-instance-generators/blob/main/examples/example.png "instance examples")
 
+### Generator
 To generate instances use [gen.py](https://github.com/krr-up/mapf-instance-generators/blob/main/gen.py) as follows:
 
 ```
@@ -25,6 +26,8 @@ required arguments for room:
 required arguments for random:
   -c [0-100], --cover [0-100]  percentage of vertices covered
   ```
+  
+### Encodings
 The generator makes use of the following encodings that can also be used without the generator as follows:
 
 - [random.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/encodings/random.lp): Generates a random instance
@@ -47,11 +50,12 @@ The generator makes use of the following encodings that can also be used without
 
   usage: `clingo instance.lp agents.lp --rand-freq=1 -c a=2 `
 
+### Visualize
 To be able to visualize the instances with the asprilo visualizer, use the converter: [mif_to_asprilo.lp](https://github.com/krr-up/mapf-instance-format/blob/main/mif_to_asprilo.lp) like this:
 
 usage: `clingo instance.lp mif_to_asprilo.lp | viz`
 ___
-### Literature:
+### Literature
 - [Answer Set Programming for Procedural Content Generation: A Design Space Approach](https://doi.org/10.1109/TCIAIG.2011.2158545)
 - [ASP with Applications to Mazes and Levels](https://doi.org/10.1007/978-3-319-42716-4_8)
 - [Stepping through an Answer-Set Program](https://doi.org/10.1007/978-3-642-20895-9_13)
