@@ -34,8 +34,9 @@ def meta():
 	global instanceFileName
 	horizon=1
 	while 'UN' in getoutput('clingo ' + instanceFileName + ' encodings/mif.lp -c horizon=' + str(horizon) + ' -V0 -q'): horizon = horizon + 1
-	write('a', '\nmakespan(' + str(horizon) + ').')
 	os.rename(instanceFileName, instanceFileName[:-3] + '_h' + str(horizon) + '.lp')
+	with open(instanceFileName[:-3] + '_h' + str(horizon) + '_meta.lp', 'w') as metaFile:
+		metaFile.write('% meta information:\n' + '#const horizon=' + str(horizon) + '.\nmakespan(horizon).')
 
 def write(mode, string):
 	with open(instanceFileName, mode) as instance:
