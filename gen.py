@@ -35,14 +35,15 @@ def meta():
 	horizon=1
 	while 'UN' in getoutput('clingo ' + instanceFileName + ' encodings/mif.lp -c horizon=' + str(horizon) + ' -V0 -q'): horizon = horizon + 1
 	os.rename(instanceFileName, instanceFileName[:-3] + '_h' + str(horizon) + '.lp')
-	with open(instanceFileName[:-3] + '_h' + str(horizon) + '_meta.lp', 'w') as metaFile:
+	instanceFileName = instanceFileName[:-3] + '_h' + str(horizon) + '.lp'
+	with open(instanceFileName[:-3] + '_meta.lp', 'w') as metaFile:
 		metaFile.write('% meta information:\n' + '#const horizon=' + str(horizon) + '.\nmakespan(horizon).')
 
 def write(mode, string):
 	with open(instanceFileName, mode) as instance:
 		instance.write(string)
 
-parser       = argparse.ArgumentParser(usage='gen.py (maze | random -c [0-100] | room -w WIDTH) -s SIZE -a AGENTS [-m] [-v] [-h]')
+parser       = argparse.ArgumentParser(usage='python gen.py (maze | random -c [0-100] | room -w WIDTH) -s SIZE -a AGENTS [-m] [-v] [-h]')
 req_group    = parser.add_argument_group('required arguments for all')
 room_group   = parser.add_argument_group('required arguments for room')
 random_group = parser.add_argument_group('required arguments for random')
