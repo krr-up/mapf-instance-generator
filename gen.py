@@ -34,10 +34,13 @@ def meta():
 	global instanceFileName
 	horizon=1
 	while 'UN' in getoutput('clingo ' + instanceFileName + ' encodings/mif.lp -c horizon=' + str(horizon) + ' -V0 -q'): horizon = horizon + 1
+	acyclic = 'acyclic.'
+	if 'UN' in getoutput('clingo ' + instanceFileName + ' encodings/mif.lp -c horizon=' + str(horizon) + ' -c acyclic=1 -V0 -q'):
+		acyclic = ''
 	os.rename(instanceFileName, instanceFileName[:-3] + '_h' + str(horizon) + '.lp')
 	instanceFileName = instanceFileName[:-3] + '_h' + str(horizon) + '.lp'
 	with open(instanceFileName[:-3] + '_meta.lp', 'w') as metaFile:
-		metaFile.write('% meta information:\n' + '#const horizon=' + str(horizon) + '.\nmakespan(horizon).')
+		metaFile.write('% meta information:\n' + '#const horizon=' + str(horizon) + '.\nmakespan(horizon).\n' + acyclic)
 
 def write(mode, string):
 	with open(instanceFileName, mode) as instance:
