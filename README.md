@@ -26,6 +26,7 @@ required arguments for room:
 required arguments for random:
   -c [0-100], --cover [0-100]  percentage of vertices covered
   ```
+Warning: As the used arguments impact the problem difficulty, long runtime is to be expected e.g. for high values for --size or low values for --cover.
   
 ### Encodings
 The generator makes use of the following encodings that can also be used without the generator as follows:
