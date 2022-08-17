@@ -3,7 +3,7 @@ from subprocess import getoutput
 
 def agents():
 	global instance_filled
-	instance_filled = getoutput('clingo ' + instanceFileName + ' encodings/agents.lp -c a=' + args.agents + ' --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
+	instance_filled = getoutput('clingo ' + instanceFileName + ' encodings/agents.lp -c a=' + args.agents + ' --configuration=frumpy --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
 
 def header():
 	header = '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%\n% Size X and Y:\t\t' + str(int(args.size)*2) + '\n% Number of Agents:\t\t' + args.agents
