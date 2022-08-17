@@ -49,7 +49,7 @@ The generator makes use of the following encodings that can also be used without
 
 - [agents.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/encodings/agents.lp): Inserts agents, starts and goals
 
-  usage: `clingo instance.lp agents.lp --rand-freq=1 -c a=2 `
+  usage: `clingo instance.lp agents.lp --rand-freq=1 --configuration=frumpy -c a=2 `
 
 ### Visualize
 To be able to visualize the instances with the asprilo visualizer, use the converter: [mif_to_asprilo.lp](https://github.com/krr-up/mapf-instance-format/blob/main/mif_to_asprilo.lp) like this:
