@@ -30,17 +30,20 @@ def room():
 	instanceFileName  = 'room_s' + args.size + '_a' + args.agents + '_w' + str(args.width) +'.lp'
 	instance_unfilled = getoutput('clingo encodings/room.lp -c s=' + args.size + ' -c w=' + args.width + ' --rand-freq=1 --configuration=frumpy -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
 
-def meta():
+def meta_inc():
 	global instanceFileName
-	horizon=1
-	while 'UN' in getoutput('clingo ' + instanceFileName + ' encodings/mif.lp -c horizon=' + str(horizon) + ' -V0 -q'): horizon = horizon + 1
-	acyclic = 'acyclic.'
-	if 'UN' in getoutput('clingo ' + instanceFileName + ' encodings/mif.lp -c horizon=' + str(horizon) + ' -c acyclic=1 -V0 -q'):
-		acyclic = ''
-	os.rename(instanceFileName, instanceFileName[:-3] + '_h' + str(horizon) + '.lp')
-	instanceFileName = instanceFileName[:-3] + '_h' + str(horizon) + '.lp'
+
+	solution = getoutput('clingo encodings/mif_inc.lp ' + instanceFileName + ' -W none --outf=1')
+	solution = solution.split("Calls          : ",1)[1]
+	horizon = str(int(solution.split("% Time",1)[0])-1)
+	
+	if 'UN' in getoutput('clingo encodings/mif.lp -c acyclic=1 -c horizon=' + horizon + ' ' + instanceFileName): acyclic = ''
+	else: acyclic = 'acyclic.'
+	
+	os.rename(instanceFileName, instanceFileName[:-3] + '_h' + horizon + '.lp')
+	instanceFileName = instanceFileName[:-3] + '_h' + horizon + '.lp'
 	with open(instanceFileName[:-3] + '_meta.lp', 'w') as metaFile:
-		metaFile.write('% meta information:\n' + '#const horizon=' + str(horizon) + '.\nmakespan(horizon).\n' + acyclic)
+		metaFile.write('% meta information:\n' + '#const horizon=' + horizon + '.\nmakespan(horizon).\n' + acyclic)
 
 def write(mode, string):
 	with open(instanceFileName, mode) as instance:
@@ -66,5 +69,5 @@ write('w', instance_unfilled)
 agents()
 write('w', header())
 write('a', instance_filled)
-if args.meta: meta()
+if args.meta: meta_inc()
 if args.visualize: os.system('clingo ' + instanceFileName + ' encodings/mif_to_asprilo.lp | viz')
