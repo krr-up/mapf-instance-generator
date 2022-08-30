@@ -34,16 +34,19 @@ def meta_inc():
 	global instanceFileName
 
 	solution = getoutput('clingo encodings/mif_inc.lp ' + instanceFileName + ' -W none --outf=1')
-	solution = solution.split("Calls          : ",1)[1]
-	horizon = str(int(solution.split("% Time",1)[0])-1)
+	if 'Calls' in solution:
+		solution = solution.split("Calls          : ",1)[1]
+		horizon = str(int(solution.split("% Time",1)[0])-1)
+		
+		if 'UN' in getoutput('clingo encodings/mif.lp -c acyclic=1 -c horizon=' + horizon + ' ' + instanceFileName): acyclic = ''
+		else: acyclic = 'acyclic.'
 	
-	if 'UN' in getoutput('clingo encodings/mif.lp -c acyclic=1 -c horizon=' + horizon + ' ' + instanceFileName): acyclic = ''
-	else: acyclic = 'acyclic.'
+		os.rename(instanceFileName, instanceFileName[:-3] + '_h' + horizon + '.lp')
+		instanceFileName = instanceFileName[:-3] + '_h' + horizon + '.lp'
+		with open(instanceFileName[:-3] + '_meta.lp', 'w') as metaFile:
+			metaFile.write('% meta information:\n' + '#const horizon=' + horizon + '.\nmakespan(horizon).\n' + acyclic)
 	
-	os.rename(instanceFileName, instanceFileName[:-3] + '_h' + horizon + '.lp')
-	instanceFileName = instanceFileName[:-3] + '_h' + horizon + '.lp'
-	with open(instanceFileName[:-3] + '_meta.lp', 'w') as metaFile:
-		metaFile.write('% meta information:\n' + '#const horizon=' + horizon + '.\nmakespan(horizon).\n' + acyclic)
+	else: print(solution)
 
 def write(mode, string):
 	with open(instanceFileName, mode) as instance:
