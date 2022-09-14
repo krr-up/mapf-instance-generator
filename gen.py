@@ -3,8 +3,8 @@ from subprocess import getoutput
 
 def agents():
 	global instance_filled
-	instance_filled = getoutput('clingo ' + instanceFileName + ' encodings/agents.lp -c a=' + args.agents + ' --configuration=frumpy --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
-
+	if args.distance is None: instance_filled = getoutput('clingo ' + instanceFileName + ' encodings/agents.lp -c a=' + args.agents + ' --init-watches=rnd --sign-def=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
+	else: instance_filled = getoutput('clingo ' + instanceFileName + ' encodings/agents.lp -c d=' + args.distance + ' -c a=' + args.agents + ' --init-watches=rnd --sign-def=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
 def header():
 	header = '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%\n% Size X and Y:\t\t' + str(int(args.size)*2) + '\n% Number of Agents:\t\t' + args.agents
 	if args.type == 'random': header = header + '\n% Vertices used (in %):\t' + args.cover
@@ -15,20 +15,20 @@ def header():
 def maze():
 	global instanceFileName, instance_unfilled
 	instanceFileName  = 'maze_s' + args.size + '_a' + args.agents +'.lp'
-	instance_unfilled = getoutput('clingo encodings/maze.lp -c s=' + args.size + ' --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1') 
+	instance_unfilled = getoutput('clingo encodings/maze.lp -c s=' + args.size + ' --sign-def=rnd --init-watches=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1') 
 
 def random():
 	global instanceFileName, instance_unfilled
 	if args.cover is None: raise parser.error('random requires -c/--cover: percentage of vertices covered')
 	elif int(args.cover) < 0 or int(args.cover) > 100: raise argparse.ArgumentTypeError('argument -c/--cover: int value must be between 0 and 100')
 	instanceFileName  = 'random_s' + args.size + '_a' + args.agents + '_c' + args.cover +'.lp'
-	instance_unfilled = getoutput('clingo encodings/random.lp -c s=' + args.size + ' -c c=' + args.cover + ' --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
+	instance_unfilled = getoutput('clingo encodings/random.lp -c s=' + args.size + ' -c c=' + args.cover + ' --sign-def=rnd --init-watches=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
 
 def room():
 	global instanceFileName, instance_unfilled
 	if args.width is None: raise parser.error('room requires -w/--width: width of rooms')
 	instanceFileName  = 'room_s' + args.size + '_a' + args.agents + '_w' + str(args.width) +'.lp'
-	instance_unfilled = getoutput('clingo encodings/room.lp -c s=' + args.size + ' -c w=' + args.width + ' --rand-freq=1 --configuration=frumpy -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
+	instance_unfilled = getoutput('clingo encodings/room.lp -c s=' + args.size + ' -c w=' + args.width + ' --rand-freq=1 --init-watches=rnd --sign-def=rnd -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
 
 def meta_inc():
 	global instanceFileName
@@ -57,6 +57,7 @@ req_group    = parser.add_argument_group('required arguments for all')
 room_group   = parser.add_argument_group('required arguments for room')
 random_group = parser.add_argument_group('required arguments for random')
 parser.add_argument(      'type',              help='type of instance to be generated',         choices=('maze', 'random', 'room'))
+parser.add_argument(      '-d', '--distance',  help='min. manhatten distance from start to goal',    type=str)
 parser.add_argument(      '-v', '--visualize', help='convert to and visualize with asprilo',    action='store_true')
 parser.add_argument(      '-m', '--meta',      help='gets and adds meta informations',          action='store_true')
 req_group.add_argument(   '-s', '--size',      help='size of instance',               type=str, required=True)
