@@ -12,19 +12,20 @@ positional arguments:
   {maze,random,room}
 
 optional arguments:
-  -h,         --help           show this help message and exit
-  -v,         --visualize      convert to and visualize with asprilo
-  -m,         --meta           gets and adds meta informations
+  -h,          --help               show this help message and exit
+  -d DISTANCE, --distance DISTANCE  min. manhatten distance from start to goal
+  -v,          --visualize          convert to and visualize with asprilo
+  -m,          --meta               gets and adds meta informations
 
 required arguments for all:
-  -s SIZE,    --size SIZE      size of instance
-  -a AGENTS,  --agents AGENTS  number of agents
+  -s SIZE,     --size SIZE          size of instance
+  -a AGENTS,   --agents AGENTS      number of agents
 
 required arguments for room:
-  -w WIDTH,   --width WIDTH    width of rooms
+  -w WIDTH,    --width WIDTH        width of rooms
 
 required arguments for random:
-  -c [0-100], --cover [0-100]  percentage of vertices covered
+  -c [0-100],  --cover [0-100]      percentage of vertices covered
   ```
 Warning: As the used arguments impact the problem difficulty, long runtime is to be expected e.g. for high values for --size or low values for --cover.
   
@@ -49,7 +50,7 @@ The generator makes use of the following encodings that can also be used without
 
 - [agents.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/encodings/agents.lp): Inserts agents, starts and goals
 
-  usage: `clingo instance.lp agents.lp --rand-freq=1 --configuration=frumpy -c a=2 `
+  usage: `clingo instance.lp agents.lp --rand-freq=1 --configuration=frumpy -c a=2 -c d=5`
 
 ### Visualize
 To be able to visualize the instances with the asprilo visualizer, use the converter: [mif_to_asprilo.lp](https://github.com/krr-up/mapf-instance-format/blob/main/mif_to_asprilo.lp) like this:
