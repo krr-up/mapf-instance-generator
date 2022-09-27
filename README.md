@@ -13,6 +13,7 @@ positional arguments:
 
 optional arguments:
   -h,          --help               show this help message and exit
+               --allSPs             generates all shortest paths
   -d DISTANCE, --distance DISTANCE  min. manhatten distance from start to goal
   -v,          --visualize          convert to and visualize with asprilo
   -m,          --meta               gets and adds meta informations
