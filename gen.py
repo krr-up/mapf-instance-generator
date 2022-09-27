@@ -41,12 +41,28 @@ def meta_inc():
 		if 'UN' in getoutput('clingo encodings/mif.lp -c acyclic=1 -c horizon=' + horizon + ' ' + instanceFileName): acyclic = ''
 		else: acyclic = 'acyclic.'
 	
-		os.rename(instanceFileName, instanceFileName[:-3] + '_h' + horizon + '.lp')
-		instanceFileName = instanceFileName[:-3] + '_h' + horizon + '.lp'
+		#os.rename(instanceFileName, instanceFileName[:-3] + '_h' + horizon + '.lp')
+		#instanceFileName = instanceFileName[:-3] + '_h' + horizon + '.lp'
 		with open(instanceFileName[:-3] + '_meta.lp', 'w') as metaFile:
 			metaFile.write('% meta information:\n' + '#const horizon=' + horizon + '.\nmakespan(horizon).\n' + acyclic)
 	
 	else: print(solution)
+	
+	
+def shortest_paths():
+	global max_SP_length
+	max_SP_length = 0
+	for agent in range(1,int(args.agents)+1):
+		numSPs='1'
+		if args.allSPs: numSPs='0'
+		shortest_paths = getoutput('clingo encodings/SP.lp ' + instanceFileName + ' -c agent=' + str(agent) + ' -W none --out-atomf=%s. -V0 ' + numSPs + ' | head -n -1')
+		
+		SP_length = shortest_paths.split('length('+str(agent)+',',1)[1]
+		SP_length = int(SP_length.split(').',1)[0])
+		if max_SP_length<SP_length: max_SP_length = SP_length
+		
+		with open(instanceFileName[:-3] + '_SPs.lp', 'a') as SP_file:
+			SP_file.write('agent ' + str(agent) + ':\n' + shortest_paths + '\n\n')
 
 def write(mode, string):
 	with open(instanceFileName, mode) as instance:
@@ -56,14 +72,15 @@ parser       = argparse.ArgumentParser(usage='python gen.py (maze | random -c [0
 req_group    = parser.add_argument_group('required arguments for all')
 room_group   = parser.add_argument_group('required arguments for room')
 random_group = parser.add_argument_group('required arguments for random')
-parser.add_argument(      'type',              help='type of instance to be generated',         choices=('maze', 'random', 'room'))
-parser.add_argument(      '-d', '--distance',  help='min. manhatten distance from start to goal',    type=str)
-parser.add_argument(      '-v', '--visualize', help='convert to and visualize with asprilo',    action='store_true')
-parser.add_argument(      '-m', '--meta',      help='gets and adds meta informations',          action='store_true')
-req_group.add_argument(   '-s', '--size',      help='size of instance',               type=str, required=True)
-req_group.add_argument(   '-a', '--agents',    help='number of agents',               type=str, required=True)
-room_group.add_argument(  '-w', '--width',     help='width of rooms',                 type=str)
-random_group.add_argument('-c', '--cover',     help='percentage of vertices covered', type=str, metavar='[0-100]')
+parser.add_argument(      'type',              help='type of instance to be generated',           choices=('maze', 'random', 'room'))
+parser.add_argument(            '--allSPs',    help='generates all shortest paths',               action='store_true')
+parser.add_argument(      '-d', '--distance',  help='min. manhatten distance from start to goal', type=str)
+parser.add_argument(      '-v', '--visualize', help='convert to and visualize with asprilo',      action='store_true')
+parser.add_argument(      '-m', '--meta',      help='gets and adds meta informations',            action='store_true')
+req_group.add_argument(   '-s', '--size',      help='size of instance',                 type=str, required=True)
+req_group.add_argument(   '-a', '--agents',    help='number of agents',                 type=str, required=True)
+room_group.add_argument(  '-w', '--width',     help='width of rooms',                   type=str)
+random_group.add_argument('-c', '--cover',     help='percentage of vertices covered',   type=str, metavar='[0-100]')
 args = parser.parse_args()
 
 if args.type == 'maze': maze()
@@ -73,5 +90,6 @@ write('w', instance_unfilled)
 agents()
 write('w', header())
 write('a', instance_filled)
+shortest_paths()
 if args.meta: meta_inc()
 if args.visualize: os.system('clingo ' + instanceFileName + ' encodings/mif_to_asprilo.lp | viz')
