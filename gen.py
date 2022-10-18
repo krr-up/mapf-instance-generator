@@ -50,6 +50,8 @@ def meta_inc():
 	
 	
 def shortest_paths():
+	with open(instanceFileName[:-3] + '_SPs.lp', 'w') as SP_file:
+			SP_file.write('')
 	global max_SP_length
 	max_SP_length = 0
 	for agent in range(1,int(args.agents)+1):
@@ -62,7 +64,7 @@ def shortest_paths():
 		if max_SP_length<SP_length: max_SP_length = SP_length
 		
 		with open(instanceFileName[:-3] + '_SPs.lp', 'a') as SP_file:
-			SP_file.write('agent ' + str(agent) + ':\n' + shortest_paths + '\n\n')
+			SP_file.write('% agent ' + str(agent) + ':\n' + shortest_paths + '\n\n')
 
 def write(mode, string):
 	with open(instanceFileName, mode) as instance:
