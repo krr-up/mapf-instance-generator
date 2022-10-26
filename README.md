@@ -6,10 +6,10 @@
 To generate instances use [gen.py](https://github.com/krr-up/mapf-instance-generators/blob/main/gen.py) as follows:
 
 ```
-usage: python gen.py (maze | random -c [0-100] | room -w WIDTH) -s SIZE -a AGENTS [-m] [-v] [-h]
+usage: python gen.py (maze | random -c [0-100] | room -w WIDTH | warehouse -w WIDTH) -s SIZE -a AGENTS [-m] [-v] [-h]
 
 positional arguments:
-  {maze,random,room}
+  {maze,random,room,warehouse}
 
 optional arguments:
   -h,          --help               show this help message and exit
@@ -47,7 +47,11 @@ The generator makes use of the following encodings that can also be used without
 
 - [room.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/encodings/room.lp): Generates instance with rooms
 
-  usage: `clingo room.lp --rand-freq=1 --configuration=frumpy -c s=20 -c w=5` 
+  usage: `clingo room.lp --rand-freq=1 --configuration=frumpy -c s=20 -c w=5`
+  
+- [warehouse.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/encodings/warehouse.lp): Generates warehouse instance
+
+  usage: `clingo warehouse.lp -c s=20 -c a=10 -c w=5` 
 
 - [agents.lp](https://github.com/krr-up/mapf-instance-generators/blob/main/encodings/agents.lp): Inserts agents, starts and goals
 
