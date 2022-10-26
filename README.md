@@ -22,8 +22,8 @@ required arguments for all:
   -s SIZE,     --size SIZE          size of instance
   -a AGENTS,   --agents AGENTS      number of agents
 
-required arguments for room:
-  -w WIDTH,    --width WIDTH        width of rooms
+required arguments for room / warehouse:
+  -w WIDTH,    --width WIDTH        width of rooms / shelves
 
 required arguments for random:
   -c [0-100],  --cover [0-100]      percentage of vertices covered
