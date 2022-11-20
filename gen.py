@@ -1,4 +1,4 @@
-import argparse, os
+import argparse, os, time
 from subprocess import getoutput
 
 def agents():
@@ -80,6 +80,13 @@ def write(mode, string):
 	with open(instanceFileName, mode) as instance:
 		instance.write(string)
 
+def info(typ, msg):
+	if typ == 'start' and not args.quiet:
+		global st
+		st = time.time()
+		print(msg, end=' ', flush=True)
+	elif typ == 'end' and not args.quiet:	print('done (in ', "{:5.1f}".format(time.time()-st), ' seconds).')
+
 parser       = argparse.ArgumentParser(usage='python gen.py (maze | random -c [0-100] | room -w WIDTH | warehouse -w WIDTH) -s SIZE -a AGENTS [-d DISTANCE] [-dur MINDUR MAXDUR] [-m] [-q] [-v] [-h]')
 req_group    = parser.add_argument_group('required arguments for all instance types')
 room_group   = parser.add_argument_group('required arguments for room / warehouse type')
@@ -97,29 +104,29 @@ room_group.add_argument(  '-w',  '--width',        help='width of rooms',       
 random_group.add_argument('-c',  '--cover',        help='percentage of vertices covered',   type=str, metavar='[0-100]')
 args = parser.parse_args()
 
-if not args.quiet: print('Generating instance...', end=' ', flush=True)
+info('start','Generating instance...\t\t')
 if args.type == 'maze': maze()
 if args.type == 'random': random()
 if args.type == 'room': room()
 if args.type == 'warehouse': warehouse()
 write('w', instance_unfilled)
-if not args.quiet: print('done.')
+info('end','')
 
-if not args.quiet: print('Filling instance with agents...', end=' ', flush=True)
+info('start','Filling instance with agents...\t')
 agents()
-if not args.quiet: print('done.')
+info('end','')
 
 if args.durations: add_durations()
 
 header()
 
-if not args.quiet: print('Getting shortest paths...', end=' ', flush=True)
+info('start','Getting shortest paths...\t')
 shortest_paths()
-if not args.quiet: print('done.')
+info('end','')
 
 if args.meta:
-	if not args.quiet: print('Getting meta informations...', end=' ', flush=True)
+	info('start','Getting meta informations...\t')
 	meta_inc()
-	if not args.quiet: print('done.')
+	info('end','')
 
 if args.visualize: os.system('clingo ' + instanceFileName + ' encodings/mif_to_asprilo.lp | viz')
