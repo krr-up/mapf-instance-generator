@@ -39,7 +39,6 @@ def warehouse():
 	instance_unfilled = getoutput('clingo encodings/warehouse.lp -c s=' + args.size + ' -c w=' + args.width + ' -c a=' + args.agents + ' --rand-freq=1 --init-watches=rnd --sign-def=rnd -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
 
 def add_durations():
-	# also mif_inc_dur.lp (or inc version of vanilla) and SP_dur. also mif_dur?
 	instance_with_duration = getoutput('clingo encodings/durations.lp -c mindur=' + args.durations[0] + ' -c maxdur=' + args.durations[1] + ' ' + instanceFileName + ' -V0 --out-atomf=%s. --out-ifs="\n" -W none --init-watches=rnd --sign-def=rnd --rand-freq=1 | head -n -1')
 	write('w', instance_with_duration)
 
@@ -81,7 +80,7 @@ def write(mode, string):
 	with open(instanceFileName, mode) as instance:
 		instance.write(string)
 
-parser       = argparse.ArgumentParser(usage='python gen.py (maze | random -c [0-100] | room -w WIDTH | warehouse -w WIDTH) -s SIZE -a AGENTS [-d DISTANCE] [-dur MINDUR MAXDUR] [-m] [-v] [-h]')
+parser       = argparse.ArgumentParser(usage='python gen.py (maze | random -c [0-100] | room -w WIDTH | warehouse -w WIDTH) -s SIZE -a AGENTS [-d DISTANCE] [-dur MINDUR MAXDUR] [-m] [-q] [-v] [-h]')
 req_group    = parser.add_argument_group('required arguments for all instance types')
 room_group   = parser.add_argument_group('required arguments for room / warehouse type')
 random_group = parser.add_argument_group('required arguments for random type')
@@ -90,6 +89,7 @@ parser.add_argument(             '--allSPs',       help='generates all shortest 
 parser.add_argument(      '-d',  '--distance',     help='min. manhatten distance from start to goal', type=str, default='0')
 parser.add_argument(      '-dur','--durations',    help='generates instances with durations',         type=str, nargs=2, metavar=('MINDUR', 'MAXDUR'))
 parser.add_argument(      '-m',  '--meta',         help='gets and adds meta informations',            action='store_true')
+parser.add_argument(      '-q',  '--quiet',        help='turns on quiet mode',                        action='store_true')
 parser.add_argument(      '-v',  '--visualize',    help='convert to and visualize with asprilo',      action='store_true')
 req_group.add_argument(   '-s',  '--size',         help='size of instance',                 type=str, required=True)
 req_group.add_argument(   '-a',  '--agents',       help='number of agents',                 type=str, required=True)
@@ -97,14 +97,29 @@ room_group.add_argument(  '-w',  '--width',        help='width of rooms',       
 random_group.add_argument('-c',  '--cover',        help='percentage of vertices covered',   type=str, metavar='[0-100]')
 args = parser.parse_args()
 
+if not args.quiet: print('Generating instance...', end=' ', flush=True)
 if args.type == 'maze': maze()
 if args.type == 'random': random()
 if args.type == 'room': room()
 if args.type == 'warehouse': warehouse()
 write('w', instance_unfilled)
+if not args.quiet: print('done.')
+
+if not args.quiet: print('Filling instance with agents...', end=' ', flush=True)
 agents()
+if not args.quiet: print('done.')
+
 if args.durations: add_durations()
+
 header()
+
+if not args.quiet: print('Getting shortest paths...', end=' ', flush=True)
 shortest_paths()
-if args.meta: meta_inc()
+if not args.quiet: print('done.')
+
+if args.meta:
+	if not args.quiet: print('Getting meta informations...', end=' ', flush=True)
+	meta_inc()
+	if not args.quiet: print('done.')
+
 if args.visualize: os.system('clingo ' + instanceFileName + ' encodings/mif_to_asprilo.lp | viz')
