@@ -1,5 +1,6 @@
 import argparse, os, time
 from subprocess import getoutput
+from random import randint
 
 def agents():
 	instance_filled = getoutput('clingo ' + instanceFileName + ' encodings/agents.lp -c d=' + args.distance + ' -c a=' + args.agents + ' --init-watches=rnd --sign-def=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
@@ -39,8 +40,14 @@ def warehouse():
 	instance_unfilled = getoutput('clingo encodings/warehouse.lp -c s=' + args.size + ' -c w=' + args.width + ' -c a=' + args.agents + ' --rand-freq=1 --init-watches=rnd --sign-def=rnd -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
 
 def add_durations():
-	instance_with_duration = getoutput('clingo encodings/durations.lp -c mindur=' + args.durations[0] + ' -c maxdur=' + args.durations[1] + ' ' + instanceFileName + ' -V0 --out-atomf=%s. --out-ifs="\n" -W none --init-watches=rnd --sign-def=rnd --rand-freq=1 | head -n -1')
-	write('w', instance_with_duration)
+	#instance_with_duration = getoutput('clingo encodings/durations.lp -c mindur=' + args.durations[0] + ' -c maxdur=' + args.durations[1] + ' ' + instanceFileName + ' -V0 --out-atomf=%s. --out-ifs="\n" -W none --init-watches=rnd --sign-def=rnd --rand-freq=1 | head -n -1')
+	#write('w', instance_with_duration)
+	with open(instanceFileName, 'r+') as instance:
+		instance_with_durations = instance.readlines()
+		instance.seek(0)
+		for line in instance_with_durations:
+			if 'edge' in line: line = line.replace('))','),'+str(randint(int(args.durations[0]),int(args.durations[1])))+')')
+			instance.writelines(line)	
 
 def meta_inc():
 	global instanceFileName
