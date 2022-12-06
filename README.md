@@ -6,7 +6,7 @@
 To generate instances use [gen.py](https://github.com/krr-up/mapf-instance-generators/blob/main/gen.py) as follows:
 
 ```
-usage: python gen.py (maze | random -c [0-100] | room -w WIDTH | warehouse -w WIDTH) -s SIZE -a AGENTS [-d DISTANCE] [-dur MINDUR MAXDUR] [-m] [-v] [-h]
+usage: python gen.py (maze | random -c [0-100] | room -w WIDTH | warehouse -w WIDTH) -s SIZE -a AGENTS [-d DISTANCE] [-dur MINDUR MAXDUR] [-m] [-t TIMEOUT] [-v] [-h] [-q]
 
 
 positional arguments:
@@ -14,11 +14,12 @@ positional arguments:
 
 optional arguments:
   -h,                 --help                     show this help message and exit
-                      --allSPs                   generates all shortest paths for all agents
+                      --allSPs                   generates all shortest paths instead of one
   -d DISTANCE,        --distance DISTANCE        min. manhatten distance from start to goal
   -dur MINDUR MAXDUR, --durations MINDUR MAXDUR  generates instances with durations
   -m,                 --meta                     gets and adds meta informations
   -q,                 --quiet                    turns on quiet mode
+  -t,                 --timeout                  sets a timeout in seconds
   -v,                 --visualize                convert to and visualize with asprilo
 
 
