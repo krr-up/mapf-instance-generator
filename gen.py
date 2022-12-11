@@ -23,9 +23,9 @@ def create_instance(timeout):
 	elif args.type == 'room': instanceFileName  = 'room_s' + args.size + '_a' + args.agents + '_w' + str(args.width) +'.lp'
 	elif args.type == 'warehouse': instanceFileName  = 'warehouse_s' + args.size + '_a' + args.agents + '_w' + str(args.width) +'.lp'
 	if   args.type == 'maze': instance_unfilled = getoutput('clingo encodings/maze.lp -c s=' + args.size + ' --sign-def=rnd --init-watches=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" --time-limit=' + str(timeout) + ' | head -n -1')
-	elif args.type == 'random': instance_unfilled = getoutput('clingo encodings/random.lp -c s=' + args.size + ' -c c=' + args.cover + ' --sign-def=rnd --init-watches=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
-	elif args.type == 'room': instance_unfilled = getoutput('clingo encodings/room.lp -c s=' + args.size + ' -c w=' + args.width + ' --rand-freq=1 --init-watches=rnd --sign-def=rnd -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
-	elif args.type == 'warehouse': instance_unfilled = getoutput('clingo encodings/warehouse.lp -c s=' + args.size + ' -c w=' + args.width + ' -c a=' + args.agents + ' --rand-freq=1 --init-watches=rnd --sign-def=rnd -V0 --out-atomf=%s. --out-ifs="\n" | head -n -1')
+	elif args.type == 'random': instance_unfilled = getoutput('clingo encodings/random.lp -c s=' + args.size + ' -c c=' + args.cover + ' --sign-def=rnd --init-watches=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" --time-limit=' + str(timeout) + ' | head -n -1')
+	elif args.type == 'room': instance_unfilled = getoutput('clingo encodings/room.lp -c s=' + args.size + ' -c w=' + args.width + ' --rand-freq=1 --init-watches=rnd --sign-def=rnd -V0 --out-atomf=%s. --out-ifs="\n" --time-limit=' + str(timeout) + ' | head -n -1')
+	elif args.type == 'warehouse': instance_unfilled = getoutput('clingo encodings/warehouse.lp -c s=' + args.size + ' -c w=' + args.width + ' -c a=' + args.agents + ' --rand-freq=1 --init-watches=rnd --sign-def=rnd -V0 --out-atomf=%s. --out-ifs="\n" --time-limit=' + str(timeout) + ' | head -n -1')
 	if 'INTERRUPTED' in instance_unfilled: clean_up('\nTIMEOUT')
 	write('w', instance_unfilled)
 
