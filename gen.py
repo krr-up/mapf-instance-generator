@@ -1,14 +1,31 @@
 import argparse, os, time, signal
 from subprocess import getoutput
 from random import randint
+from random import shuffle
+from itertools import product
 
 def add_agents(timeout):
-	instance_filled = getoutput('clingo ' + instanceFileName + ' encodings/agents.lp -c d=' + args.distance + ' -c a=' + args.agents + ' --init-watches=rnd --sign-def=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" --time-limit=' + str(round(timeout)) + ' | head -n -1')
+	if args.distance != '0':
+		instance_filled = getoutput('clingo ' + instanceFileName + ' encodings/agents.lp -c d=' + args.distance + ' -c a=' + args.agents + ' --init-watches=rnd --sign-def=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" --time-limit=' + str(round(timeout)) + ' | head -n -1')
+		if 'INTERRUPTED' in instance_filled: clean_up('\nTIMEOUT')
+	else:
+		list_of_vertices = []
+		for line in instance_unfilled.splitlines():
+			if 'vertex' in line:
+				line = line.split("vertex(",1)[1]
+				line = line.split(").",1)[0]
+				list_of_vertices.append(line)
+		if len(list_of_vertices) < int(args.agents): clean_up('\nNumber of agents (' + args.agents + ') exceeds number of vertices (' + str(len(list_of_vertices)) + ')!')
+		list_of_starts = list_of_vertices.copy()
+		list_of_goals  = list_of_vertices.copy()
+		shuffle(list_of_starts)
+		shuffle(list_of_goals)
+		instance_filled = instance_unfilled + '\n'
+		for agent in range(1, int(args.agents)+1): instance_filled = instance_filled + ('start(' + str(agent) + ',' + str(list_of_starts.pop()) + ').\n') + ('goal(' + str(agent) + ',' + str(list_of_goals.pop()) + ').\n' + 'agent(' + str(agent) + ').')
 	write('w', instance_filled)
-	if 'INTERRUPTED' in instance_filled: clean_up('\nTIMEOUT')
 
 def add_header(timeout):
-	header = '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%\n% Size X and Y:\t\t' + str(int(args.size)*2) + '\n% Number of Agents:\t\t' + args.agents
+	header = '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%\n% Size X and Y:\t\t' + str(int(args.size)) + '\n% Number of Agents:\t\t' + args.agents
 	if   args.type == 'random': header = header + '\n% Vertices used (in %):\t' + args.cover
 	elif args.type == 'room':   header = header + '\n% Room Width:\t\t\t'       + args.width
 	header = header + '\n%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n#program base.\n\n'
@@ -75,7 +92,7 @@ def get_shortest_paths(timeout):
 		if args.durations: shortest_paths = getoutput('clingo encodings/SP_dur.lp ' + instanceFileName + ' -c agent=' + str(agent) + ' -W none --out-atomf=%s. -V0 ' + numSPs + ' --time-limit=' + str(round(time_remaining_SP)) + ' | head -n -1')
 		else: shortest_paths = getoutput('clingo encodings/SP.lp ' + instanceFileName + ' -c agent=' + str(agent) + ' -W none --out-atomf=%s. -V0 ' + numSPs + ' --time-limit=' + str(round(time_remaining_SP)) + ' | head -n -1')
 		if 'INTERRUPTED' in shortest_paths: clean_up('\nTIMEOUT')
-		
+
 		with open(instanceFileName[:-3] + '_SPs.lp', 'a') as SP_file:
 			SP_file.write('% agent ' + str(agent) + ':\n' + shortest_paths + '\n\n')
 		if timeout>0: time_elapsed_SP_inloop = time_elapsed_SP_inloop + (time.time() - time_start_SP_inloop)
