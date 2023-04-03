@@ -34,6 +34,16 @@ def add_header(timeout):
 		instance_without_header = instance.read()
 	write('w', header + instance_without_header)
 
+def clean_instance(instanceFileName):
+	global instance_unfilled
+	instance_unfilled = ''
+	with open(instanceFileName, 'r') as instance:
+		instance_uncleaned = instance.readlines()
+		instance.seek(0)
+		for line in instance_uncleaned:
+			if 'agent' not in line and 'start' not in line and 'goal' not in line:
+				instance_unfilled += line
+
 def create_instance(timeout):
 	global instanceFileName, instance_unfilled
 	if   args.type == 'maze': instanceFileName  = 'maze_s' + args.size + '_a' + args.agents +'.lp'
@@ -85,7 +95,10 @@ def get_shortest_paths(timeout):
 	global max_SP_length
 	max_SP_length = 0
 	time_elapsed_SP_inloop = 0
-	for agent in range(1,int(args.agents)+1):
+	with open(instanceFileName, 'r') as instance:
+		inst = instance.read()
+	
+	for agent in range(1,inst.count('agent')+1):
 		time_start_SP_inloop = time.time()
 		time_remaining_SP = timeout - time_elapsed_SP_inloop
 		numSPs='1'
@@ -104,7 +117,7 @@ def img2inst(image_path, x_size, y_size):
     instance_unfilled = ''
     instanceFileName  = (image_path.split('/')[-1]).split('.')[0] + '.lp'
     image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-    resized_image = cv2.resize(image, (x_size, y_size), interpolation=cv2.INTER_LANCZOS4)
+    resized_image = cv2.resize(image, (x_size, y_size), interpolation=cv2.INTER_NEAREST)
 
     for y in range(0, y_size):
         for x in range(0, x_size):
@@ -160,14 +173,15 @@ parser.add_argument(      '-m',  '--meta',         help='gets and adds meta info
 parser.add_argument(      '-q',  '--quiet',        help='turns on quiet mode',                        action='store_true')
 parser.add_argument(      '-t',  '--timeout',      help='sets a timeout in seconds',                  type=str, default='0')
 parser.add_argument(      '-v',  '--visualize',    help='convert to and visualize with asprilo',      action='store_true')
-req_group.add_argument(   '-s',  '--size',         help='size of instance',                           type=str, required=True)
+req_group.add_argument(   '-s',  '--size',         help='size of instance',                           type=str)
 req_group.add_argument(   '-a',  '--agents',       help='number of agents',                           type=str)
 room_group.add_argument(  '-w',  '--width',        help='width of rooms',                             type=str)
 random_group.add_argument('-c',  '--cover',        help='percentage of vertices covered',             type=str, metavar='[0-100]')
 args = parser.parse_args()
-if args.type not in ['maze', 'random', 'room', 'warehouse'] and '.jpg' not in args.type and '.png' not in args.type:
-	print('File type must be: maze, random, room or warehouse or end with .jpg or .png')
+if args.type not in ['maze', 'random', 'room', 'warehouse'] and '.jpg' not in args.type and '.png' not in args.type and '.lp' not in args.type:
+	print('File type must be: maze, random, room or warehouse or end with .jpg, .png or .lp')
 	raise SystemExit()
+if '.lp' not in args.type: raise parser.error('--size required')
 if args.type == 'random' and (args.cover is None or int(args.cover) < 0 or int(args.cover) > 100): raise parser.error('random requires -c/--cover: percentage of vertices covered (must be INT between 0 and 100)')
 if (args.type == 'room' or args.type == 'warehouse') and args.width is None: raise parser.error('room/warehouse require -w/--width: width of rooms/shelves')
 if '.jpg' in args.type or '.png' in args.type:
@@ -175,6 +189,10 @@ if '.jpg' in args.type or '.png' in args.type:
 	else:
 		print('File \'' + args.type + '\' not found')
 		raise SystemExit()
+
+if '.lp' in args.type:
+	instanceFileName  = (args.type.split('/')[-1])
+	if args.agents: clean_instance(instanceFileName)
 
 time_elapsed = 0
 if '.' not in args.type: run('create_instance')
