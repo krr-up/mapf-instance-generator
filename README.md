@@ -6,11 +6,11 @@
 To generate instances use [gen.py](https://github.com/krr-up/mapf-instance-generators/blob/main/gen.py) as follows:
 
 ```
-usage: python gen.py (maze | random -c [0-100] | room -w WIDTH | warehouse -w WIDTH | *.jpg | *.png) -s SIZE -a AGENTS [-d DISTANCE] [-dur MINDUR MAXDUR] [-m] [-t TIMEOUT] [-v] [-h] [-q]
+usage: python gen.py (maze | random -c [0-100] | room -w WIDTH | warehouse -w WIDTH | *.jpg | *.png | *.lp) -s SIZE -a AGENTS [-d DISTANCE] [-dur MINDUR MAXDUR] [-m] [-t TIMEOUT] [-v] [-h] [-q]
 
 
 positional arguments:
-  {maze, random, room, warehouse, *.jpg, *.png}  type of instance to be generated or path to image to be converted
+  {maze,random,room,warehouse,*.jpg,*.png,*.lp}  type of instance to be generated, path to image to be converted or path to instance to be loaded
 
 optional arguments:
   -h,                 --help                     show this help message and exit
