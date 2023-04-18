@@ -174,14 +174,14 @@ parser.add_argument(      '-q',  '--quiet',        help='turns on quiet mode',  
 parser.add_argument(      '-t',  '--timeout',      help='sets a timeout in seconds',                  type=str, default='0')
 parser.add_argument(      '-v',  '--visualize',    help='convert to and visualize with asprilo',      action='store_true')
 req_group.add_argument(   '-s',  '--size',         help='size of instance',                           type=str)
-req_group.add_argument(   '-a',  '--agents',       help='number of agents',                           type=str)
+req_group.add_argument(   '-a',  '--agents',       help='number of agents',                           type=str, default='0')
 room_group.add_argument(  '-w',  '--width',        help='width of rooms',                             type=str)
 random_group.add_argument('-c',  '--cover',        help='percentage of vertices covered',             type=str, metavar='[0-100]')
 args = parser.parse_args()
 if args.type not in ['maze', 'random', 'room', 'warehouse'] and '.jpg' not in args.type and '.png' not in args.type and '.lp' not in args.type:
 	print('File type must be: maze, random, room or warehouse or end with .jpg, .png or .lp')
 	raise SystemExit()
-if '.lp' not in args.type: raise parser.error('--size required')
+if '.lp' not in args.type and not args.size: raise parser.error('--size required')
 if args.type == 'random' and (args.cover is None or int(args.cover) < 0 or int(args.cover) > 100): raise parser.error('random requires -c/--cover: percentage of vertices covered (must be INT between 0 and 100)')
 if (args.type == 'room' or args.type == 'warehouse') and args.width is None: raise parser.error('room/warehouse require -w/--width: width of rooms/shelves')
 if '.jpg' in args.type or '.png' in args.type:
