@@ -3,6 +3,12 @@
 ![instance examples](https://github.com/krr-up/mapf-instance-generators/blob/main/examples/example.png "instance examples")
 
 ### Generator
+#### Installation
+Requires Conda to be installed.
+
+To install download this repository and run  `conda env create --file reqs.yml` from the main folder. This will create a new environment called "gen" and install all required packages. Please remember to activate the correct environment using `conda activate gen` to be able to use the generator.
+
+#### Usage
 To generate instances use [gen.py](https://github.com/krr-up/mapf-instance-generators/blob/main/gen.py) as follows:
 
 ```
