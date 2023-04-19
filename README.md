@@ -1,14 +1,13 @@
-### Instance generator for the [lightweight MAPF instance format](https://github.com/krr-up/mapf-instance-format)
+The **MAPF Instance Generator** is a tool for generating instances of the Multi-Agent Path Finding (MAPF) problem in the [lightweight MAPF instance format](https://github.com/krr-up/mapf-instance-format). It is designed to help students and researchers create custom MAPF instances for testing and benchmarking purposes.
 
 ![instance examples](https://github.com/krr-up/mapf-instance-generators/blob/main/examples/example.png "instance examples")
 
-### Generator
-#### Installation
+### Installation
 Requires Conda to be installed.
 
 To install download this repository and run  `conda env create --file reqs.yml` from the main folder. This will create a new environment called "gen" and install all required packages. Please remember to activate the correct environment using `conda activate gen` to be able to use the generator.
 
-#### Usage
+### Usage
 To generate instances use [gen.py](https://github.com/krr-up/mapf-instance-generators/blob/main/gen.py) as follows:
 
 ```
@@ -40,11 +39,29 @@ required arguments for random type:
   -c [0-100],         --cover [0-100]            percentage of vertices covered
   ```
 Warning: As the used arguments impact the problem difficulty, long runtime is to be expected e.g. for high values for --size or low values for --cover.
+### Examples
 
-### Visualize
-To be able to visualize the instances with the asprilo visualizer, use the converter: [mif_to_asprilo.lp](https://github.com/krr-up/mapf-instance-format/blob/main/mif_to_asprilo.lp) like this:
+#### Generation
+##### Maze
+`python gen.py maze -s 10 -a 5` **generates** a 10x10 **maze** instance with 5 agents.
+##### Random
+`python gen.py random -s 10 -a 5 -c 50` generates a 10x10 random instance with 5 agents where 50% of the space is covered by nodes.
+##### Room
+`python gen.py room -s 10 -a 5 -w 5` generates a 10x10 room instance with 5 agents where every room has a size of 5x5 nodes.
+#### Change instance
+`python gen.py instance.lp -a 12` changes the number of agents of an instance to 12.
+#### Convert image to instance
+`python gen.py image.jpg -s 10` converts an image to a 10x10 instance.
+#### Meta information
+The `-m` option saves the minimal makespan and shortest path for each of the agents in a seperate meta file.
+#### Timeout
+`-t 600` sets a 10 minutes timeout for the generation
+#### Quiet
+Use `-q` to have no status output at all
+#### Visualization
+To automatically visualize the instance at the end of the process use the `-v` option.
 
-usage: `clingo instance.lp mif_to_asprilo.lp | viz`
+To visualize the instances at a later time use the asprilo visualizer with the converter: [mif_to_asprilo.lp](https://github.com/krr-up/mapf-instance-format/blob/main/mif_to_asprilo.lp) like this: `clingo instance.lp mif_to_asprilo.lp | viz`
 ___
 ### Literature
 - [Answer Set Programming for Procedural Content Generation: A Design Space Approach](https://doi.org/10.1109/TCIAIG.2011.2158545)
