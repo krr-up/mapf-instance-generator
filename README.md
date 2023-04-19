@@ -43,7 +43,7 @@ Warning: As the used arguments impact the problem difficulty, long runtime is to
 
 #### Generation
 ##### Maze
-`python gen.py maze -s 10 -a 5` **generates** a 10x10 **maze** instance with 5 agents.
+`python gen.py maze -s 10 -a 5` generates a 10x10 maze instance with 5 agents.
 ##### Random
 `python gen.py random -s 10 -a 5 -c 50` generates a 10x10 random instance with 5 agents where 50% of the space is covered by nodes.
 ##### Room
