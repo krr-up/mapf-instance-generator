@@ -2,13 +2,22 @@ The **MAPF Instance Generator** is a tool for generating instances of the Multi-
 
 ![instance examples](https://github.com/krr-up/mapf-instance-generators/blob/main/examples/example.png "instance examples")
 
+<details open>
+<summary>
+
 ### Installation
+</summary>
 Requires Conda to be installed.
 
 To install download this repository and run  `conda env create --file reqs.yml` from the main folder. This will create a new environment called "gen" and install all required packages. Please remember to activate the correct environment using `conda activate gen` to be able to use the generator.
+</details>
 
 ### Usage
-To generate instances use [gen.py](https://github.com/krr-up/mapf-instance-generators/blob/main/gen.py) as follows:
+<details open>
+<summary>
+
+#### Help message
+</summary>
 
 ```
 usage: python gen.py (maze | random -c [0-100] | room -w WIDTH | warehouse -w WIDTH | *.jpg | *.png | *.lp) -s SIZE -a AGENTS [-d DISTANCE] [-dur MINDUR MAXDUR] [-m] [-t TIMEOUT] [-v] [-h] [-q]
@@ -39,6 +48,8 @@ required arguments for random type:
   -c [0-100],         --cover [0-100]            percentage of vertices covered
   ```
 Warning: As the used arguments impact the problem difficulty, long runtime is to be expected e.g. for high values for --size or low values for --cover.
+</details>
+
 ### Examples
 
 #### Generation
@@ -48,10 +59,37 @@ Warning: As the used arguments impact the problem difficulty, long runtime is to
 `python gen.py random -s 10 -a 5 -c 50` generates a 10x10 random instance with 5 agents where 50% of the space is covered by nodes.
 ##### Room
 `python gen.py room -s 10 -a 5 -w 5` generates a 10x10 room instance with 5 agents where every room has a size of 5x5 nodes.
+
 #### Change instance
 `python gen.py instance.lp -a 12` changes the number of agents of an instance to 12.
+  
+<details open>
+<summary>
+
 #### Convert image to instance
+</summary>
+
 `python gen.py image.jpg -s 10` converts an image to a 10x10 instance.
+<table>
+  <thead>
+    <tr>
+      <th width="600px align="center""><img src="https://user-images.githubusercontent.com/80356280/233345961-daa686b4-9ce1-4498-8b6b-75a26a0020a3.jpg"></th>
+      <th width="600px align="center""><img src="https://user-images.githubusercontent.com/80356280/233345833-9fbc98f7-7a1a-4868-b708-5b1e7e114bec.png"></th>
+    </tr>
+  </thead>
+  <tbody>
+  <tr width="600px" align="center">
+      <td>
+        <img src="https://user-images.githubusercontent.com/80356280/233344560-25b5a86e-05b7-4a09-a831-080a11ce9cf8.png">
+      </td>
+      <td>
+        <img src="https://user-images.githubusercontent.com/80356280/233344577-d8eba2f2-0b03-45be-b5f6-2f29e29b2db6.png">
+      </td>
+  </tr>
+  </tbody>
+</table>
+</details>
+
 #### Meta information
 The `-m` option saves the minimal makespan and shortest path for each of the agents in a seperate meta file.
 #### Timeout
