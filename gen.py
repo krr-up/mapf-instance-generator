@@ -163,7 +163,7 @@ signal.signal(signal.SIGTERM, signal_handler)
 
 parser       = argparse.ArgumentParser(usage='python gen.py (maze | random -c [0-100] | room -w WIDTH | warehouse -w WIDTH) -s SIZE -a AGENTS [-d DISTANCE] [-dur MINDUR MAXDUR] [-m] [-t TIMEOUT] [-v] [-h] [-q]')
 req_group    = parser.add_argument_group('required arguments for all instance types')
-parser.add_argument(   'type',                  help='', metavar=['maze', 'random', 'room', 'warehouse', '*.jpg', '*.png', '*.lp'])
+parser.add_argument(   'type',                  help='')
 parser.add_argument(          '--allSPs',       help='generates all shortest paths instead of one',action='store_true')
 parser.add_argument(   '-d',  '--distance',     help='min. manhatten distance from start to goal', type=str, default='0')
 parser.add_argument(   '-dur','--durations',    help='generates instances with durations',         type=str, nargs=2, metavar=('MINDUR', 'MAXDUR'))
