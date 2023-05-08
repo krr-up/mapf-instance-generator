@@ -1,13 +1,16 @@
-#const s = 10.
+#const x=5.
+#const y=5.
 
-dim(1..s).
-dim2((D*2)-1) :- dim(D).
+dimx(1..x).
+dimy(1..y).
+dimx2((D*2)-1) :- dimx(D).
+dimy2((D*2)-1) :- dimy(D).
 
 1 { parent(X,Y, 0,-2);
     parent(X,Y, 2, 0);
     parent(X,Y,-2, 0);
     parent(X,Y, 0, 2) } 1 :-
-dim2(X), dim2(Y).
+dimx2(X), dimy2(Y).
 
 edge((X     ,Y     ),(X+DX/2,Y+DY/2)) :- parent(X,Y,DX,DY).
 edge((X+DX/2,Y+DY/2),(X+DX  ,Y+DY  )) :- parent(X,Y,DX,DY).
@@ -19,10 +22,10 @@ edge(V,U) :- edge(U,V).
 
 vertex(V) :- edge(V,_).
 
-1{init(X,Y) : dim2(X), dim2(Y)}1.
+1{init(X,Y) : dimx2(X), dimy2(Y)}1.
 linked(X,Y) :- init(X,Y).
 linked(X,Y) :- parent(X,Y,DX,DY), linked(X+DX,Y+DY).
-:- dim2(X), dim2(Y), not linked(X,Y).
+:- dimx2(X), dimy2(Y), not linked(X,Y).
 
 #show.
 #show edge/2.
