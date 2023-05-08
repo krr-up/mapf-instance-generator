@@ -20,7 +20,7 @@ To install download this repository and run  `conda env create --file reqs.yml` 
 </summary>
 
 ```
-usage: python gen.py (maze | random -c [0-100] | room -w WIDTH | warehouse -w WIDTH | *.jpg | *.png | *.lp) -s SIZE -a AGENTS [-d DISTANCE] [-dur MINDUR MAXDUR] [-m] [-t TIMEOUT] [-v] [-h] [-q]
+usage: python gen.py (maze | random -c [0-100] | room -w WIDTH | warehouse -w WIDTH | *.jpg | *.png | *.lp) -s X-SIZE Y-SIZE -a AGENTS [-d DISTANCE] [-dur MINDUR MAXDUR] [-m] [-t TIMEOUT] [-v] [-h] [-q]
 
 
 positional arguments:
@@ -38,7 +38,7 @@ optional arguments:
 
 
 required arguments for all instance types:
-  -s SIZE,            --size SIZE                size of instance
+  -s X-SIZE Y-SIZE,   --size X-SIZE Y-SIZE       size of instance
   -a AGENTS,          --agents AGENTS            number of agents
 
 required arguments for room / warehouse type:
@@ -54,11 +54,11 @@ Warning: As the used arguments impact the problem difficulty, long runtime is to
 
 #### Generation
 ##### Maze
-`python gen.py maze -s 10 -a 5` generates a 10x10 maze instance with 5 agents.
+`python gen.py maze -s 10 10 -a 5` generates a 10x10 maze instance with 5 agents.
 ##### Random
-`python gen.py random -s 10 -a 5 -c 50` generates a 10x10 random instance with 5 agents where 50% of the space is covered by nodes.
+`python gen.py random -s 10 10 -a 5 -c 50` generates a 10x10 random instance with 5 agents where 50% of the space is covered by nodes.
 ##### Room
-`python gen.py room -s 10 -a 5 -w 5` generates a 10x10 room instance with 5 agents where every room has a size of 5x5 nodes.
+`python gen.py room -s 10 10 -a 5 -w 5` generates a 10x10 room instance with 5 agents where every room has a size of 5x5 nodes.
 
 #### Change instance
 `python gen.py instance.lp -a 12` changes the number of agents of an instance to 12.
@@ -69,7 +69,7 @@ Warning: As the used arguments impact the problem difficulty, long runtime is to
 #### Convert image to instance
 </summary>
 
-`python gen.py image.jpg -s 10` converts an image to a 10x10 instance.
+`python gen.py image.jpg -s 10 10` converts an image to a 10x10 instance.
 <table>
   <thead>
     <tr>
