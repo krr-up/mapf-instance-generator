@@ -1,6 +1,7 @@
 % Dimensions:
 %% Total:
-#const s=2.
+#const x=2.
+#const y=2.
 
 %% Room:
 #const w=3.
@@ -8,11 +9,11 @@
 
 % Vertices:
 %% Rooms:
-vertex((X,Y)) :- X=1..s, Y=1..s, X\(w+1)!=0, Y\(w+1)!=0.
+vertex((X,Y)) :- X=1..x, Y=1..y, X\(w+1)!=0, Y\(w+1)!=0.
 
 %% Doors:
-{vertex((X,Y+F*(w+1))) : Y=1..w}1 :- X=1..s, X\(w+1)=0, F=0..(s/(w+1)).
-{vertex((X+F*(w+1),Y)) : X=1..w}1 :- Y=1..s, Y\(w+1)=0, F=0..(s/(w+1)).
+{vertex((X,Y+F*(w+1))) : Y=1..w}1 :- X=1..x, X\(w+1)=0, F=0..(x/(w+1)).
+{vertex((X+F*(w+1),Y)) : X=1..w}1 :- Y=1..y, Y\(w+1)=0, F=0..(y/(w+1)).
 
 
 % Edges:
