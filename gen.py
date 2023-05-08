@@ -25,7 +25,7 @@ def add_agents(timeout):	# Adds agents to the instance
 	write('w', instance_filled)
 
 def add_header(timeout):	# Adds a header to the instance file
-	header = f'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%\n% Size X and Y:\t\t{str(int(args.size))}\n% Number of Agents:\t\t{args.agents}'
+	header = f'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%\n% Size in X:\t\t\t{str(int(args.size[0]))}\n% Size in Y:\t\t\t{str(int(args.size[1]))}\n% Number of Agents:\t\t{args.agents}'
 	if   args.type == 'random': header += f'\n% Vertices used (in %):\t{args.cover}'
 	elif args.type == 'room':   header += f'\n% Room Width:\t\t\t{args.width}'
 	header += '\n%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n#program base.\n\n'
@@ -43,17 +43,17 @@ def clean_instance(instanceFileName):	# Cleans the instance (remove all agents)
 			if 'agent' not in line and 'start' not in line and 'goal' not in line:
 				instance_unfilled += line
 
-def create_instance(timeout):	# Creates an instance based on the type
+def create_instance(timeout):	# Creates an instance based on the type, size, etc. 
 	global instanceFileName, instance_unfilled
 
-	if   args.type == 'maze'               : instanceFileName  = f'{args.type}_s{args.size}_a{args.agents}.lp'
-	elif args.type == 'random'             : instanceFileName  = f'{args.type}_s{args.size}_a{args.agents}_c{args.cover}.lp'
-	elif args.type in ['room', 'warehouse']: instanceFileName  = f'{args.type}_s{args.size}_a{args.agents}_w{str(args.width)}.lp'
+	if   args.type == 'maze'               : instanceFileName  = f'{args.type}_x{args.size[0]}_y{args.size[1]}_a{args.agents}.lp'
+	elif args.type == 'random'             : instanceFileName  = f'{args.type}_x{args.size[0]}_y{args.size[1]}_a{args.agents}_c{args.cover}.lp'
+	elif args.type in ['room', 'warehouse']: instanceFileName  = f'{args.type}_x{args.size[0]}_y{args.size[1]}_a{args.agents}_w{str(args.width)}.lp'
 	
-	if   args.type == 'maze':      instance_unfilled = getoutput(f'clingo encodings/{args.type}.lp -c s={args.size}                                      --sign-def=rnd --init-watches=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" --time-limit={str(timeout)} | head -n -1')
-	elif args.type == 'random':    instance_unfilled = getoutput(f'clingo encodings/{args.type}.lp -c s={args.size} -c c={args.cover}                    --sign-def=rnd --init-watches=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" --time-limit={str(timeout)} | head -n -1')
-	elif args.type == 'room':      instance_unfilled = getoutput(f'clingo encodings/{args.type}.lp -c s={args.size} -c w={args.width}                    --sign-def=rnd --init-watches=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" --time-limit={str(timeout)} | head -n -1')
-	elif args.type == 'warehouse': instance_unfilled = getoutput(f'clingo encodings/{args.type}.lp -c s={args.size} -c w={args.width} -c a={args.agents} --sign-def=rnd --init-watches=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" --time-limit={str(timeout)} | head -n -1')
+	if   args.type == 'maze':      instance_unfilled = getoutput(f'clingo encodings/{args.type}.lp -c x={args.size[0]} -c y={args.size[1]}                                      --sign-def=rnd --init-watches=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" --time-limit={str(timeout)} | head -n -1')
+	elif args.type == 'random':    instance_unfilled = getoutput(f'clingo encodings/{args.type}.lp -c x={args.size[0]} -c y={args.size[1]} -c c={args.cover}                    --sign-def=rnd --init-watches=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" --time-limit={str(timeout)} | head -n -1')
+	elif args.type == 'room':      instance_unfilled = getoutput(f'clingo encodings/{args.type}.lp -c x={args.size[0]} -c y={args.size[1]} -c w={args.width}                    --sign-def=rnd --init-watches=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" --time-limit={str(timeout)} | head -n -1')
+	elif args.type == 'warehouse': instance_unfilled = getoutput(f'clingo encodings/{args.type}.lp -c x={args.size[0]} -c y={args.size[1]} -c w={args.width} -c a={args.agents} --sign-def=rnd --init-watches=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" --time-limit={str(timeout)} | head -n -1')
 	if 'INTERRUPTED' in instance_unfilled: clean_up('\nTIMEOUT')
 	write('w', instance_unfilled)
 
@@ -115,12 +115,12 @@ def img2inst(timeout):	# Converts an image to an instance of a given size
     global instance_unfilled
     instance_unfilled = ''
     if not args.agents: args.agents = '0'
-    instanceFileName  = (args.type.split('/')[-1]).split('.')[0] + f'_s{args.size}_a{args.agents}.lp'
+    instanceFileName  = (args.type.split('/')[-1]).split('.')[0] + f'_x{args.size[0]}_y{args.size[1]}_a{args.agents}.lp'
     image = cv2.imread(args.type, cv2.IMREAD_GRAYSCALE)
-    resized_image = cv2.resize(image, (int(args.size), int(args.size)), interpolation=cv2.INTER_NEAREST)
+    resized_image = cv2.resize(image, (int(args.size[0]), int(args.size[1])), interpolation=cv2.INTER_NEAREST)
 
-    for y in range(0, int(args.size)):
-        for x in range(0, int(args.size)):
+    for y in range(0, int(args.size[1])):
+        for x in range(0, int(args.size[0])):
             if not is_dark_pixel(resized_image, x, y):
                 instance_unfilled  += (f"vertex(({x + 1},{y + 1})).\n")
 
@@ -173,9 +173,10 @@ parser.add_argument(   '-t',  '--timeout',      help='sets a timeout in seconds'
 parser.add_argument(   '-v',  '--visualize',    help='convert to and visualize with asprilo',      action='store_true')
 parser.add_argument(   '-w',  '--width',        help='width of rooms (default=5)',                 type=str, default='5')
 parser.add_argument(   '-c',  '--cover',        help='percentage of vertices covered (default=75)',type=str, default='75', metavar='[0-100]')
-req_group.add_argument('-s',  '--size',         help='size of instance',                           type=str)
+req_group.add_argument('-s',  '--size',         help='size of instance',                           type=str, nargs=2, metavar=('X-SIZE', 'Y-SIZE'))
 req_group.add_argument('-a',  '--agents',       help='number of agents',                           type=str)
 args = parser.parse_args()
+
 if args.type not in ['maze', 'random', 'room', 'warehouse'] and '.jpg' not in args.type and '.png' not in args.type and '.lp' not in args.type:
 	print('File type must be: maze, random, room or warehouse or end with .jpg, .png or .lp')
 	raise SystemExit()
