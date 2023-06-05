@@ -10,19 +10,19 @@ import numpy as np
 
 def add_agents(timeout):
     '''Adds agents to the instance'''
+    list_of_vertices = []
+    for line in instance_unfilled.splitlines():
+        if 'vertex' in line:
+            line = line.split("vertex(", 1)[1]
+            line = line.split(").", 1)[0]
+            list_of_vertices.append(line)
+    if len(list_of_vertices) < int(args.agents):
+        clean_up(f'\nError: Number of agents ({args.agents}) exceeds number of vertices ({str(len(list_of_vertices))})!')
     if args.distance != '0':
         instance_filled = getoutput(f'clingo {instanceFileName} encodings/agents.lp -c d={args.distance} -c a={args.agents} --init-watches=rnd --sign-def=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" --time-limit={str(round(timeout))} | head -n -1')
         if 'INTERRUPTED' in instance_filled:
             clean_up('\nTIMEOUT')
     else:
-        list_of_vertices = []
-        for line in instance_unfilled.splitlines():
-            if 'vertex' in line:
-                line = line.split("vertex(", 1)[1]
-                line = line.split(").", 1)[0]
-                list_of_vertices.append(line)
-        if len(list_of_vertices) < int(args.agents):
-            clean_up(f'\nNumber of agents ({args.agents}) exceeds number of vertices ({str(len(list_of_vertices))})!')
         list_of_starts = list_of_vertices.copy()
         list_of_goals = list_of_vertices.copy()
         shuffle(list_of_starts)
@@ -217,7 +217,7 @@ def clean_up(msg):
     for filename in filenames_to_delete:
         if os.path.exists(filename):
             os.remove(filename)
-            print(f'removed {filename}')
+            print(f'Removed {filename}')
     raise SystemExit()
 
 
