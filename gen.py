@@ -5,7 +5,6 @@ import signal
 import cv2
 from subprocess import getoutput
 from random import randint, shuffle
-from itertools import product
 import numpy as np
 
 
