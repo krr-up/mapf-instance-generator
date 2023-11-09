@@ -6,6 +6,32 @@ import cv2
 from subprocess import getoutput
 from random import randint, shuffle
 import numpy as np
+from pathlib import Path
+
+PATH = os.path.dirname(os.path.realpath(__file__)) + '/'
+
+SocMAPF_installed = True
+try:
+    from mapf_soc import SocMAPF
+except:
+    SocMAPF_installed = False
+
+
+def acyclicity_check(timeout):
+    global horizon
+    if args.durations:
+            acyc_out = getoutput(f'clingo {PATH}encodings/mif_dur.lp -c acyclic=1 -c horizon={horizon} {instanceFileName} --time-limit={str(round(timeout))}')
+    else:
+            acyc_out = getoutput(f'clingo {PATH}encodings/mif.lp -c acyclic=1 -c horizon={horizon} {instanceFileName} --time-limit={str(round(timeout))}')
+    if ((timeout) < 0) or ('INTERRUPTED' in acyc_out):
+            clean_up('\nTIMEOUT')
+    elif 'UN' in acyc_out:
+            acyclic = ''
+    else:
+            acyclic = 'acyclic.'
+
+    with open(instanceFileName[:-3] + '_meta.lp', 'w') as metaFile:
+        metaFile.write(f'% meta information:\n#const horizon={horizon}.\nmakespan(horizon).\n{acyclic}')
 
 
 def add_agents(timeout):
@@ -19,7 +45,7 @@ def add_agents(timeout):
     if len(list_of_vertices) < int(args.agents):
         clean_up(f'\nError: Number of agents ({args.agents}) exceeds number of vertices ({str(len(list_of_vertices))})!')
     if args.distance != '0':
-        instance_filled = getoutput(f'clingo {instanceFileName} encodings/agents.lp -c d={args.distance} -c a={args.agents} --init-watches=rnd --sign-def=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" --time-limit={str(round(timeout))} | head -n -1')
+        instance_filled = getoutput(f'clingo {instanceFileName} {PATH}encodings/agents.lp -c d={args.distance} -c a={args.agents} --init-watches=rnd --sign-def=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" --time-limit={str(round(timeout))} | head -n -1')
         if 'INTERRUPTED' in instance_filled:
             clean_up('\nTIMEOUT')
     else:
@@ -62,21 +88,14 @@ def create_instance(timeout):
     '''Creates an instance based on the type, size, etc.'''
     global instanceFileName, instance_unfilled
 
-    if args.type == 'maze':
-        instanceFileName = f'{args.type}_x{args.size[0]}_y{args.size[1]}_a{args.agents}.lp'
+    if args.type in ['empty', 'maze']:
+        instanceFileName = f'{args.directory}/{args.type}_x{args.size[0]}_y{args.size[1]}_a{args.agents}{args.suffix}.lp'
     elif args.type == 'random':
-        instanceFileName = f'{args.type}_x{args.size[0]}_y{args.size[1]}_a{args.agents}_c{args.cover}.lp'
+        instanceFileName = f'{args.directory}/{args.type}_x{args.size[0]}_y{args.size[1]}_a{args.agents}_c{args.cover}{args.suffix}.lp'
     elif args.type in ['room', 'warehouse']:
-        instanceFileName = f'{args.type}_x{args.size[0]}_y{args.size[1]}_a{args.agents}_w{str(args.width)}.lp'
+        instanceFileName = f'{args.directory}/{args.type}_x{args.size[0]}_y{args.size[1]}_a{args.agents}_w{str(args.width)}{args.suffix}.lp'
 
-    if args.type == 'maze':
-        instance_unfilled = getoutput(f'clingo encodings/{args.type}.lp -c x={args.size[0]} -c y={args.size[1]}                                      --sign-def=rnd --init-watches=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" --time-limit={str(timeout)} | head -n -1')
-    elif args.type == 'random':
-        instance_unfilled = getoutput(f'clingo encodings/{args.type}.lp -c x={args.size[0]} -c y={args.size[1]} -c c={args.cover}                    --sign-def=rnd --init-watches=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" --time-limit={str(timeout)} | head -n -1')
-    elif args.type == 'room':
-        instance_unfilled = getoutput(f'clingo encodings/{args.type}.lp -c x={args.size[0]} -c y={args.size[1]} -c w={args.width}                    --sign-def=rnd --init-watches=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" --time-limit={str(timeout)} | head -n -1')
-    elif args.type == 'warehouse':
-        instance_unfilled = getoutput(f'clingo encodings/{args.type}.lp -c x={args.size[0]} -c y={args.size[1]} -c w={args.width} -c a={args.agents} --sign-def=rnd --init-watches=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" --time-limit={str(timeout)} | head -n -1')
+    instance_unfilled = getoutput(f'clingo {PATH}encodings/{args.type}.lp -c x={args.size[0]} -c y={args.size[1]} -c w={args.width} -c a={args.agents} -c c={args.cover} --sign-def=rnd --init-watches=rnd --rand-freq=1 -V0 --out-atomf=%s. --out-ifs="\n" --time-limit={str(timeout)} | head -n -1')
     if 'INTERRUPTED' in instance_unfilled:
         clean_up('\nTIMEOUT')
     write('w', instance_unfilled)
@@ -96,36 +115,42 @@ def add_durations(timeout):
 def get_horizon(timeout):
     '''Finds the minimal makespan (horizon) of an instance'''
     global instanceFileName
+    global horizon
     time_elapsed_meta = 0
-    time_start_meta = time.time()
+    #time_start_meta = time.time()
     if args.durations:
-        solution = getoutput(f'clingo encodings/mif_inc_dur.lp {instanceFileName} -W none --outf=1 --time-limit={str(round(timeout))}')
+        solution = getoutput(f'clingo {PATH}encodings/mif_inc_dur.lp {instanceFileName} -W none --outf=1 --time-limit={str(round(timeout))}')
     else:
-        solution = getoutput(f'clingo encodings/mif_inc.lp     {instanceFileName} -W none --outf=1 --time-limit={str(round(timeout))}')
-    if (timeout < 0) or ('INTERRUPTED' in solution):
-        clean_up('\nTIMEOUT')
-    if int(args.timeout) > 0:
-        time_elapsed_meta = time.time() - time_start_meta
-    if 'Calls' in solution:
-        solution = solution.split("Calls          : ", 1)[1]
-        horizon = str(int(solution.split("% Time", 1)[0])-1)
+        if SocMAPF_installed:
+            app = SocMAPF([instanceFileName],
+                          ['--warn=none'],
+                          "inertia",
+                          "makespan",
+                          False,
+                          False,
+                          False,
+                          lambda d:d+1,
+                          print_output = False
+                         )
+            app.main()
+            horizon = app.delta + app.min_horizon
 
-        if args.durations:
-            acyc_out = getoutput(f'clingo encodings/mif_dur.lp -c acyclic=1 -c horizon={horizon} {instanceFileName} --time-limit={str(round(timeout-time_elapsed_meta))}')
+            if not args.acyclicity:
+                with open(instanceFileName[:-3] + '_meta.lp', 'w') as metaFile:
+                    metaFile.write(f'% meta information:\n#const horizon={horizon}.\nmakespan(horizon).')
+
         else:
-            acyc_out = getoutput(f'clingo encodings/mif.lp -c acyclic=1 -c horizon={horizon} {instanceFileName} --time-limit={str(round(timeout-time_elapsed_meta))}')
-        if ((timeout-time_elapsed_meta) < 0) or ('INTERRUPTED' in acyc_out):
-            clean_up('\nTIMEOUT')
-        elif 'UN' in acyc_out:
-            acyclic = ''
-        else:
-            acyclic = 'acyclic.'
-
-        with open(instanceFileName[:-3] + '_meta.lp', 'w') as metaFile:
-            metaFile.write(f'% meta information:\n#const horizon={horizon}.\nmakespan(horizon).\n{acyclic}')
-
-    else:
-        print(solution)
+            print('module "SocMAPF" not installed, falling back to slower method of finding the optimal makespan!')
+            solution = getoutput(f'clingo {PATH}encodings/mif_inc.lp     {instanceFileName} -W none --outf=1 --time-limit={str(round(timeout))}')
+            if (timeout < 0) or ('INTERRUPTED' in solution):
+                clean_up('\nTIMEOUT')
+            if int(args.timeout) > 0:
+                time_elapsed_meta = time.time() - time_start_meta
+            if 'Calls' in solution:
+                solution = solution.split("Calls          : ", 1)[1]
+                horizon = str(int(solution.split("% Time", 1)[0])-1)
+            else:
+                print('ERROR finding optimal makespan, dumping output:', solution)
 
 
 def get_shortest_paths(timeout):
@@ -145,9 +170,9 @@ def get_shortest_paths(timeout):
         if args.allSPs:
             numSPs = '0'
         if args.durations:
-            shortest_paths = getoutput(f'clingo encodings/SP_dur.lp {instanceFileName} -c agent={str(agent)} -W none --out-atomf=%s. -V0 {numSPs} --time-limit={str(round(time_remaining_SP))} | head -n -1')
+            shortest_paths = getoutput(f'clingo {PATH}encodings/SP_dur.lp {instanceFileName} -c agent={str(agent)} -W none --out-atomf=%s. -V0 {numSPs} --time-limit={str(round(time_remaining_SP))} | head -n -1')
         else:
-            shortest_paths = getoutput(f'clingo encodings/SP.lp     {instanceFileName} -c agent={str(agent)} -W none --out-atomf=%s. -V0 {numSPs} --time-limit={str(round(time_remaining_SP))} | head -n -1')
+            shortest_paths = getoutput(f'clingo {PATH}encodings/SP.lp     {instanceFileName} -c agent={str(agent)} -W none --out-atomf=%s. -V0 {numSPs} --time-limit={str(round(time_remaining_SP))} | head -n -1')
         if 'INTERRUPTED' in shortest_paths:
             clean_up('\nTIMEOUT')
 
@@ -164,7 +189,7 @@ def img2inst(timeout):
     instance_unfilled = ''
     if not args.agents:
         args.agents = '0'
-    instanceFileName = (args.type.split('/')[-1]).split('.')[0] + f'_x{args.size[0]}_y{args.size[1]}_a{args.agents}.lp'
+    instanceFileName = f'{args.directory}/' + (args.type.split('/')[-1]).split('.')[0] + f'_x{args.size[0]}_y{args.size[1]}_a{args.agents}{args.suffix}.lp'
     image = cv2.imread(args.type, cv2.IMREAD_GRAYSCALE)
     resized_image = cv2.resize(image, (int(args.size[0]), int(args.size[1])),
                                interpolation=cv2.INTER_NEAREST)
@@ -228,20 +253,28 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT,  signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
-parser = argparse.ArgumentParser(usage='python gen.py (maze | random -c [0-100] | room -w WIDTH | warehouse -w WIDTH) -s SIZE -a AGENTS [-d DISTANCE] [-dur MINDUR MAXDUR] [-m] [-t TIMEOUT] [-v] [-h] [-q]')
+parser = argparse.ArgumentParser(usage='python gen.py (empty | maze | random -c [0-100] | room -w WIDTH | warehouse -w WIDTH) -s SIZE -a AGENTS [-d DISTANCE] [-dir DIRECTORY] [-dur MINDUR MAXDUR] [-m] [-suf SUFFIX] [-t TIMEOUT] [-v] [-h] [-q]')
 req_group = parser.add_argument_group('required arguments for all instance types')
 parser.add_argument('type', help='')
+parser.add_argument('-acyc', '--acyclicity', action='store_true',
+                    help='checks acyclicity')
 parser.add_argument('--allSPs', action='store_true',
                     help='generates all shortest paths instead of one')
 parser.add_argument('-d', '--distance', type=str, default='0',
                     help='min. manhatten distance from start to goal')
+parser.add_argument('-dir', '--directory', type=str, help='sets directory',
+                    default='generated_instances')
 parser.add_argument('-dur', '--durations', nargs=2,
                     metavar=('MINDUR', 'MAXDUR'),
                     type=str, help='generates instances with durations')
-parser.add_argument('-m', '--meta', help='gets and adds meta informations',
+parser.add_argument('-m', '--makespan', help='searches for minimal makespan',
                     action='store_true')
 parser.add_argument('-q', '--quiet', help='turns on quiet mode',
                     action='store_true')
+parser.add_argument('-sp', '--shortest_paths', action='store_true',
+                    help='searches for shortest paths')
+parser.add_argument('-suf', '--suffix', help='appends suffix to filename',
+                    type=str, default='')
 parser.add_argument('-t', '--timeout', help='sets a timeout in seconds',
                     type=str, default='0')
 parser.add_argument('-v', '--visualize', action='store_true',
@@ -256,18 +289,19 @@ req_group.add_argument('-s', '--size', help='size of instance', type=str,
 req_group.add_argument('-a', '--agents', help='number of agents', type=str)
 args = parser.parse_args()
 
-if args.type not in ['maze', 'random', 'room', 'warehouse'] and '.jpg' not in args.type and '.png' not in args.type and '.lp' not in args.type:
-    print('File type must be: maze, random, room or warehouse or end with .jpg, .png or .lp')
+Path(args.directory).mkdir(parents=True, exist_ok=True)
+
+if args.type not in ['empty', 'maze', 'random', 'room', 'warehouse'] and '.jpg' not in args.type and '.png' not in args.type and '.lp' not in args.type:
+    print('Type must be: empty, maze, random, room or warehouse to generate that instance; end on .jpg or .png to convert an image to an instance; or .lp to load and change an existing instance!')
     raise SystemExit()
 if '.lp' not in args.type and not args.size:
     raise parser.error('--size required')
 
 if '.lp' in args.type:
-    instanceFileName = (args.type.split('/')[-1])
+    instanceFileName = args.type.split('/')[-1].replace('.lp', f'{args.suffix}.lp')
     if args.agents:
         clean_instance(instanceFileName)
-    if args.agents:
-        instanceFileName = instanceFileName.split('_a')[0] + f'_a{args.agents}.lp'
+        instanceFileName = instanceFileName.split('_a')[0] + f'_a{args.agents}{args.suffix}.lp'
 
 if '.' not in args.type and not args.agents:
     args.agents = '0'
@@ -289,10 +323,12 @@ if args.durations:
     run('add_durations')
 if '.' not in args.type:
     run('add_header')
-if args.meta:
+if args.shortest_paths:
     run('get_shortest_paths')
+if args.makespan:
     run('get_horizon')
-
+    if args.acyclicity:
+        run('acyclicity_check')
 if args.visualize:
-    os.system(f'clingo {instanceFileName} encodings/mif_to_asprilo.lp | viz')
+    os.system(f'clingo {instanceFileName} {PATH}encodings/mif_to_asprilo.lp | viz')
 # Uses clingo to translate the instance from mif- to asprilo-format and opens it with the asprilo visualizer
