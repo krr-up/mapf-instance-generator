@@ -20,7 +20,7 @@ To install download this repository and run  `conda env create --file reqs.yml` 
 </summary>
 
 ```
-usage: python gen.py (maze | random -c [0-100] | room -w WIDTH | warehouse -w WIDTH | *.jpg | *.png | *.lp) -s X-SIZE Y-SIZE -a AGENTS [-d DISTANCE] [-dur MINDUR MAXDUR] [-m] [-t TIMEOUT] [-v] [-h] [-q]
+usage: python gen.py (empty | maze | random -c [0-100] | room -w WIDTH | warehouse -w WIDTH) -s SIZE -a AGENTS [-d DISTANCE] [-dir DIRECTORY] [-dur MINDUR MAXDUR] [-m] [-suf SUFFIX] [-t TIMEOUT] [-v] [-h] [-q]
 
 
 positional arguments:
@@ -28,26 +28,24 @@ positional arguments:
 
 optional arguments:
   -h,                 --help                     show this help message and exit
+  -a AGENTS,          --agents AGENTS            number of agents
+  -acyc,              --acyclicity               checks acyclicity
                       --allSPs                   generates all shortest paths instead of one
+  -c [0-100],         --cover [0-100]            percentage of vertices covered (default=75)
   -d DISTANCE,        --distance DISTANCE        min. manhatten distance from start to goal
+  -dir DIRECTORY      --directory DIRECTORY      sets directory
   -dur MINDUR MAXDUR, --durations MINDUR MAXDUR  generates instances with durations
-  -m,                 --meta                     gets and adds meta informations
+  -m,                 --makespan                 searches for minimal makespan
   -q,                 --quiet                    turns on quiet mode
+  -sp,                --shortest_paths           searches for shortest paths
+  -suf SUFFIX,        --suffix SUFFIX            appends suffix to filename
   -t,                 --timeout                  sets a timeout in seconds
   -v,                 --visualize                convert to and visualize with asprilo
-
+  -w WIDTH,           --width WIDTH              width of rooms / shelves (default=5)
 
 required arguments for all instance types:
   -s X-SIZE Y-SIZE,   --size X-SIZE Y-SIZE       size of instance
-  -a AGENTS,          --agents AGENTS            number of agents
-
-required arguments for room / warehouse type:
-  -w WIDTH,           --width WIDTH              width of rooms / shelves
-
-required arguments for random type:
-  -c [0-100],         --cover [0-100]            percentage of vertices covered
   ```
-Warning: As the used arguments impact the problem difficulty, long runtime is to be expected e.g. for high values for --size or low values for --cover.
 </details>
 
 ### Examples
