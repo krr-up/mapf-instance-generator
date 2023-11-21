@@ -24,8 +24,8 @@ usage: python gen.py (empty | maze | random -c [0-100] | room -w WIDTH | warehou
 
 
 positional arguments:
-  {maze,random,room,warehouse,*.jpg,*.png,*.lp}  type of instance to be generated, path to image to be converted or path to instance to be loaded
-
+  {empty, maze, random, room, warehouse, *.jpg, *.png, *.lp}
+                                                 type of instance to be generated, path to image to be converted or path to instance to be loaded
 optional arguments:
   -h,                 --help                     show this help message and exit
   -a AGENTS,          --agents AGENTS            number of agents
@@ -51,10 +51,12 @@ required arguments for all instance types:
 ### Examples
 
 #### Generation
+##### Empty
+`python gen.py empty -s 10 10 -a 5 -dur 1 5` generates an empty 10x10 instance with 5 agents and random durations between 1 and 5 of the edges.
 ##### Maze
-`python gen.py maze -s 10 10 -a 5` generates a 10x10 maze instance with 5 agents.
+`python gen.py maze -s 10 10 -a 5 -dir "mazes"` generates a 10x10 maze instance with 5 agents and saves it in the directory "mazes".
 ##### Random
-`python gen.py random -s 10 10 -a 5 -c 50` generates a 10x10 random instance with 5 agents where 50% of the space is covered by nodes.
+`python gen.py random -s 10 10 -a 5 -c 55` generates a 10x10 random instance with 5 agents where 55% of the space is covered by nodes resulting in 45% being random obstacles.
 ##### Room
 `python gen.py room -s 10 10 -a 5 -w 5` generates a 10x10 room instance with 5 agents where every room has a size of 5x5 nodes.
 
@@ -88,10 +90,15 @@ required arguments for all instance types:
 </table>
 </details>
 
-#### Meta information
-The `-m` option saves the minimal makespan and shortest path for each of the agents in a seperate meta file.
+#### Meta Information
+##### Makespan
+The `-m` option saves the minimal makespan in a seperate meta file.
+##### Shortest Paths
+The `-sp` option saves the shortest path in a seperate file.
+##### Acyclicity
+The `-acyc` option checks if the instance is solvable without any of the agents performing cycles. If so the fact `acyclic.` is added to the meta file.
 #### Timeout
-`-t 600` sets a 10 minutes timeout for the generation
+`-t 600` sets a 10 minutes timeout for the generation. 
 #### Quiet
 Use `-q` to have no status output at all
 #### Visualization
