@@ -117,9 +117,22 @@ def get_horizon(timeout):
     global instanceFileName
     global horizon
     time_elapsed_meta = 0
-    #time_start_meta = time.time()
-    if args.durations:
-        solution = getoutput(f'clingo {PATH}encodings/mif_inc_dur.lp {instanceFileName} -W none --outf=1 --time-limit={str(round(timeout))}')
+    time_start_meta = time.time()
+    if args.durations or not SocMAPF_installed:
+        if args.durations:
+            solution = getoutput(f'clingo {PATH}encodings/mif_inc_dur.lp {instanceFileName} -W none --outf=1 --time-limit={str(round(timeout))}')
+        if not SocMAPF_installed:
+            print('module "SocMAPF" not installed, falling back to slower method of finding the optimal makespan!')
+            solution = getoutput(f'clingo {PATH}encodings/mif_inc.lp     {instanceFileName} -W none --outf=1 --time-limit={str(round(timeout))}')
+        if (timeout < 0) or ('INTERRUPTED' in solution):
+            clean_up('\nTIMEOUT')
+        if int(args.timeout) > 0:
+            time_elapsed_meta = time.time() - time_start_meta
+        if 'Calls' in solution:
+            solution = solution.split("Calls          : ", 1)[1]
+            horizon = str(int(solution.split("% Time", 1)[0])-1)
+        else:
+            print('ERROR finding optimal makespan, dumping output:', solution)
     else:
         if SocMAPF_installed:
             app = SocMAPF([instanceFileName],
@@ -135,22 +148,9 @@ def get_horizon(timeout):
             app.main()
             horizon = app.delta + app.min_horizon
 
-            if not args.acyclicity:
-                with open(instanceFileName[:-3] + '_meta.lp', 'w') as metaFile:
-                    metaFile.write(f'% meta information:\n#const horizon={horizon}.\nmakespan(horizon).')
-
-        else:
-            print('module "SocMAPF" not installed, falling back to slower method of finding the optimal makespan!')
-            solution = getoutput(f'clingo {PATH}encodings/mif_inc.lp     {instanceFileName} -W none --outf=1 --time-limit={str(round(timeout))}')
-            if (timeout < 0) or ('INTERRUPTED' in solution):
-                clean_up('\nTIMEOUT')
-            if int(args.timeout) > 0:
-                time_elapsed_meta = time.time() - time_start_meta
-            if 'Calls' in solution:
-                solution = solution.split("Calls          : ", 1)[1]
-                horizon = str(int(solution.split("% Time", 1)[0])-1)
-            else:
-                print('ERROR finding optimal makespan, dumping output:', solution)
+    if not args.acyclicity:
+        with open(instanceFileName[:-3] + '_meta.lp', 'w') as metaFile:
+            metaFile.write(f'% meta information:\n#const horizon={horizon}.\nmakespan(horizon).')
 
 
 def get_shortest_paths(timeout):
@@ -256,10 +256,14 @@ signal.signal(signal.SIGTERM, signal_handler)
 parser = argparse.ArgumentParser(usage='python gen.py (empty | maze | random -c [0-100] | room -w WIDTH | warehouse -w WIDTH) -s SIZE -a AGENTS [-d DISTANCE] [-dir DIRECTORY] [-dur MINDUR MAXDUR] [-m] [-suf SUFFIX] [-t TIMEOUT] [-v] [-h] [-q]')
 req_group = parser.add_argument_group('required arguments for all instance types')
 parser.add_argument('type', help='')
+parser.add_argument('-a', '--agents', help='number of agents', type=str)
 parser.add_argument('-acyc', '--acyclicity', action='store_true',
                     help='checks acyclicity')
 parser.add_argument('--allSPs', action='store_true',
                     help='generates all shortest paths instead of one')
+parser.add_argument('-c', '--cover', type=str, default='75',
+                    help='percentage of vertices covered (default=75)',
+                    metavar='[0-100]')
 parser.add_argument('-d', '--distance', type=str, default='0',
                     help='min. manhatten distance from start to goal')
 parser.add_argument('-dir', '--directory', type=str, help='sets directory',
@@ -281,12 +285,8 @@ parser.add_argument('-v', '--visualize', action='store_true',
                     help='convert to and visualize with asprilo')
 parser.add_argument('-w', '--width', help='width of rooms (default=5)',
                     type=str, default='5')
-parser.add_argument('-c', '--cover', type=str, default='75',
-                    help='percentage of vertices covered (default=75)',
-                    metavar='[0-100]')
 req_group.add_argument('-s', '--size', help='size of instance', type=str,
                        nargs=2, metavar=('X-SIZE', 'Y-SIZE'))
-req_group.add_argument('-a', '--agents', help='number of agents', type=str)
 args = parser.parse_args()
 
 Path(args.directory).mkdir(parents=True, exist_ok=True)
